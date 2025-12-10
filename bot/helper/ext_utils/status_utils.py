@@ -7,7 +7,7 @@ from ... import task_dict, task_dict_lock, bot_start_time, status_dict, DOWNLOAD
 from ...core.config_manager import Config
 from ..telegram_helper.button_build import ButtonMaker
 
-SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
+SIZE_UNITS = ["بایت", "کیلوبایت", "مگابایت", "گیگابایت", "ترابایت", "پتابایت"]
 
 
 class MirrorStatus:
@@ -215,60 +215,61 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             user_name = "User"
 
         # --- BUILDING THE MESSAGE ---
+        # Define the invisible Left-to-Right Mark
         LRM = '\u200E' 
 
-        # 1. Filename (Usually safe, but LRM ensures the number stays on left)
+        # 1. Filename
         msg += f"<b>{index + start_position}.</b> <code>{escape(f'{task.name()}')}</code>\n"
         
-        # 2. Header - Add LRM before the symbol
-        msg += f"<b>{LRM}╭ تسک توسط {user_name}</b>\n"
+        # 2. Header (Swapped: Name first, then Label)
+        msg += f"<b>{LRM}╭ {user_name} ← تسک توسط</b>\n"
 
         if tstatus not in [MirrorStatus.STATUS_SEED, MirrorStatus.STATUS_QUEUEUP] and task.listener.progress:
             progress = task.progress()
             
-            # 3. Progress Bar & Percentage
+            # 3. Progress Bar (Kept standard: Bar then Percentage)
             msg += f"<b>{LRM}├ {get_progress_bar_string(progress)} {progress}</b>\n"
             
-            # 4. Stats Tree - Add LRM to all ├ lines
-            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>{LRM}├ پردازش شده ←</b> {task.processed_bytes()}\n"
-            msg += f"<b>{LRM}├ حجم کل ←</b> {task.size()}\n"
-            msg += f"<b>{LRM}├ سرعت ←</b> {task.speed()}\n"
-            msg += f"<b>{LRM}├ زمان باقیمانده ←</b> {task.eta()}\n"
-            msg += f"<b>{LRM}├ زمان سپری شده ←</b> {elapsed}\n"
-            msg += f"<b>{LRM}├ موتور ←</b> {engine}\n"
-            msg += f"<b>{LRM}├ حالت ←</b> {mode}\n"
+            # 4. Stats Tree (Swapped: Value first, then Label)
+            msg += f"<b>{LRM}├ <a href='{task.listener.message.link}'>{tstatus}</a> ← وضعیت</b>\n"
+            msg += f"<b>{LRM}├ {task.processed_bytes()} ← پردازش شده</b>\n"
+            msg += f"<b>{LRM}├ {task.size()} ← حجم کل</b>\n"
+            msg += f"<b>{LRM}├ {task.speed()} ← سرعت</b>\n"
+            msg += f"<b>{LRM}├ {task.eta()} ← زمان باقیمانده</b>\n"
+            msg += f"<b>{LRM}├ {elapsed} ← زمان سپری شده</b>\n"
+            msg += f"<b>{LRM}├ {engine} ← موتور</b>\n"
+            msg += f"<b>{LRM}├ {mode} ← حالت</b>\n"
             
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (is_torrent or is_qbit):
                 try:
-                    msg += f"<b>{LRM}├ سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
+                    msg += f"<b>{LRM}├ {task.seeders_num()}/{task.leechers_num()} ← سیدر/لیچر</b>\n"
                 except:
                     pass
                     
         elif tstatus == MirrorStatus.STATUS_SEED:
-            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>{LRM}├ حجم ← </b>{task.size()}\n"
-            msg += f"<b>{LRM}├ سرعت آپلود ← </b>{task.seed_speed()}\n"
-            msg += f"<b>{LRM}├ آپلود شده ← </b>{task.uploaded_bytes()}\n"
-            msg += f"<b>{LRM}├ ضریب ← </b>{task.ratio()}\n"
-            msg += f"<b>{LRM}├ زمان ← </b>{task.seeding_time()}\n"
+            msg += f"<b>{LRM}├ <a href='{task.listener.message.link}'>{tstatus}</a> ← وضعیت</b>\n"
+            msg += f"<b>{LRM}├ {task.size()} ← حجم</b>\n"
+            msg += f"<b>{LRM}├ {task.seed_speed()} ← سرعت آپلود</b>\n"
+            msg += f"<b>{LRM}├ {task.uploaded_bytes()} ← آپلود شده</b>\n"
+            msg += f"<b>{LRM}├ {task.ratio()} ← ضریب</b>\n"
+            msg += f"<b>{LRM}├ {task.seeding_time()} ← زمان</b>\n"
         else:
-            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>{LRM}├ حجم ← </b>{task.size()}\n"
+            msg += f"<b>{LRM}├ <a href='{task.listener.message.link}'>{tstatus}</a> ← وضعیت</b>\n"
+            msg += f"<b>{LRM}├ {task.size()} ← حجم</b>\n"
 
-        # 5. Cancel Command - Add LRM before ╰
+        # 5. Cancel Command (Command first, then Label)
         try:
             short_gid = task.gid()[:12]
-            msg += f"<b>{LRM}╰ توقف ← /c_{short_gid}</b>\n\n"
+            msg += f"<b>{LRM}╰ /c_{short_gid} ← توقف</b>\n\n"
         except:
-             msg += f"<b>{LRM}╰ توقف ← /cancel</b>\n\n"
+             msg += f"<b>{LRM}╰ /cancel ← توقف</b>\n\n"
 
     if len(msg) == 0:
         if status == "All":
             return None, None
         else:
             msg = f"هیچ وظیفه {status} فعالی وجود ندارد!\n\n"
-            
+
     # Buttons (No Changes)
     buttons = ButtonMaker()
     if not is_user:
