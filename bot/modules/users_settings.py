@@ -51,44 +51,44 @@ async def get_user_settings(from_user, stype="main"):
 
     if stype == "leech":
         thumbpath = f"thumbnails/{user_id}.jpg"
-        buttons.data_button("Thumbnail", f"userset {user_id} menu THUMBNAIL")
-        thumbmsg = "Exists" if await aiopath.exists(thumbpath) else "Not Exists"
+        buttons.data_button("تصویر بندانگشتی", f"userset {user_id} menu THUMBNAIL")
+        thumbmsg = "موجود" if await aiopath.exists(thumbpath) else "ناموجود"
         buttons.data_button(
-            "Leech Split Size", f"userset {user_id} menu LEECH_SPLIT_SIZE"
+            "حجم برش لیچ", f"userset {user_id} menu LEECH_SPLIT_SIZE"
         )
         if user_dict.get("LEECH_SPLIT_SIZE", False):
             split_size = user_dict["LEECH_SPLIT_SIZE"]
         else:
             split_size = Config.LEECH_SPLIT_SIZE
         buttons.data_button(
-            "Leech Destination", f"userset {user_id} menu LEECH_DUMP_CHAT"
+            "مقصد لیچ", f"userset {user_id} menu LEECH_DUMP_CHAT"
         )
         if user_dict.get("LEECH_DUMP_CHAT", False):
             leech_dest = user_dict["LEECH_DUMP_CHAT"]
         elif "LEECH_DUMP_CHAT" not in user_dict and Config.LEECH_DUMP_CHAT:
             leech_dest = Config.LEECH_DUMP_CHAT
         else:
-            leech_dest = "None"
+            leech_dest = "هیچ"
         buttons.data_button(
-            "Leech Prefix", f"userset {user_id} menu LEECH_FILENAME_PREFIX"
+            "پیشوند لیچ", f"userset {user_id} menu LEECH_FILENAME_PREFIX"
         )
         if user_dict.get("LEECH_FILENAME_PREFIX", False):
             lprefix = user_dict["LEECH_FILENAME_PREFIX"]
         elif "LEECH_FILENAME_PREFIX" not in user_dict and Config.LEECH_FILENAME_PREFIX:
             lprefix = Config.LEECH_FILENAME_PREFIX
         else:
-            lprefix = "None"
+            lprefix = "هیچ"
         if (
             user_dict.get("AS_DOCUMENT", False)
             or "AS_DOCUMENT" not in user_dict
             and Config.AS_DOCUMENT
         ):
             ltype = "DOCUMENT"
-            buttons.data_button("Send As Media", f"userset {user_id} tog AS_DOCUMENT f")
+            buttons.data_button("ارسال بصورت مدیا", f"userset {user_id} tog AS_DOCUMENT f")
         else:
             ltype = "MEDIA"
             buttons.data_button(
-                "Send As Document", f"userset {user_id} tog AS_DOCUMENT t"
+                "ارسال بصورت فایل", f"userset {user_id} tog AS_DOCUMENT t"
             )
         if (
             user_dict.get("EQUAL_SPLITS", False)
@@ -96,28 +96,28 @@ async def get_user_settings(from_user, stype="main"):
             and Config.EQUAL_SPLITS
         ):
             buttons.data_button(
-                "Disable Equal Splits", f"userset {user_id} tog EQUAL_SPLITS f"
+                "غیرفعال‌سازی برش‌های برابر", f"userset {user_id} tog EQUAL_SPLITS f"
             )
-            equal_splits = "Enabled"
+            equal_splits = "فعال"
         else:
             buttons.data_button(
-                "Enable Equal Splits", f"userset {user_id} tog EQUAL_SPLITS t"
+                "فعال‌سازی برش‌های برابر", f"userset {user_id} tog EQUAL_SPLITS t"
             )
-            equal_splits = "Disabled"
+            equal_splits = "غیرفعال"
         if (
             user_dict.get("MEDIA_GROUP", False)
             or "MEDIA_GROUP" not in user_dict
             and Config.MEDIA_GROUP
         ):
             buttons.data_button(
-                "Disable Media Group", f"userset {user_id} tog MEDIA_GROUP f"
+                "غیرفعال‌سازی مدیا گروپ", f"userset {user_id} tog MEDIA_GROUP f"
             )
-            media_group = "Enabled"
+            media_group = "فعال"
         else:
             buttons.data_button(
-                "Enable Media Group", f"userset {user_id} tog MEDIA_GROUP t"
+                "فعال‌سازی مدیا گروپ", f"userset {user_id} tog MEDIA_GROUP t"
             )
-            media_group = "Disabled"
+            media_group = "غیرفعال"
         if (
             TgClient.IS_PREMIUM_USER
             and user_dict.get("USER_TRANSMISSION", False)
@@ -125,13 +125,13 @@ async def get_user_settings(from_user, stype="main"):
             and Config.USER_TRANSMISSION
         ):
             buttons.data_button(
-                "Leech by Bot", f"userset {user_id} tog USER_TRANSMISSION f"
+                "لیچ توسط ربات", f"userset {user_id} tog USER_TRANSMISSION f"
             )
             leech_method = "user"
         elif TgClient.IS_PREMIUM_USER:
             leech_method = "bot"
             buttons.data_button(
-                "Leech by User", f"userset {user_id} tog USER_TRANSMISSION t"
+                "لیچ توسط کاربر", f"userset {user_id} tog USER_TRANSMISSION t"
             )
         else:
             leech_method = "bot"
@@ -142,103 +142,103 @@ async def get_user_settings(from_user, stype="main"):
             or "HYBRID_LEECH" not in user_dict
             and Config.HYBRID_LEECH
         ):
-            hybrid_leech = "Enabled"
+            hybrid_leech = "فعال"
             buttons.data_button(
-                "Disable Hybride Leech", f"userset {user_id} tog HYBRID_LEECH f"
+                "غیرفعال‌سازی لیچ ترکیبی", f"userset {user_id} tog HYBRID_LEECH f"
             )
         elif TgClient.IS_PREMIUM_USER:
-            hybrid_leech = "Disabled"
+            hybrid_leech = "غیرفعال"
             buttons.data_button(
-                "Enable HYBRID Leech", f"userset {user_id} tog HYBRID_LEECH t"
+                "فعال‌سازی لیچ ترکیبی", f"userset {user_id} tog HYBRID_LEECH t"
             )
         else:
-            hybrid_leech = "Disabled"
+            hybrid_leech = "غیرفعال"
 
         buttons.data_button(
-            "Thumbnail Layout", f"userset {user_id} menu THUMBNAIL_LAYOUT"
+            "چیدمان تامب‌نیل", f"userset {user_id} menu THUMBNAIL_LAYOUT"
         )
         if user_dict.get("THUMBNAIL_LAYOUT", False):
             thumb_layout = user_dict["THUMBNAIL_LAYOUT"]
         elif "THUMBNAIL_LAYOUT" not in user_dict and Config.THUMBNAIL_LAYOUT:
             thumb_layout = Config.THUMBNAIL_LAYOUT
         else:
-            thumb_layout = "None"
+            thumb_layout = "هیچ"
 
-        buttons.data_button("Back", f"userset {user_id} back")
-        buttons.data_button("Close", f"userset {user_id} close")
+        buttons.data_button("بازگشت", f"userset {user_id} back")
+        buttons.data_button("بستن", f"userset {user_id} close")
 
-        text = f"""<u>Leech Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
-Custom Thumbnail <b>{thumbmsg}</b>
-Leech Split Size is <b>{split_size}</b>
-Equal Splits is <b>{equal_splits}</b>
-Media Group is <b>{media_group}</b>
-Leech Prefix is <code>{escape(lprefix)}</code>
-Leech Destination is <code>{leech_dest}</code>
-Leech by <b>{leech_method}</b> session
-HYBRID Leech is <b>{hybrid_leech}</b>
-Thumbnail Layout is <b>{thumb_layout}</b>
+        text = f"""<u>تنظیمات لیچ برای {name}</u>
+نوع لیچ: <b>{ltype}</b>
+تصویر بندانگشتی سفارشی: <b>{thumbmsg}</b>
+حجم برش لیچ: <b>{split_size}</b>
+برش‌های برابر: <b>{equal_splits}</b>
+مدیا گروپ: <b>{media_group}</b>
+پیشوند لیچ: <code>{escape(lprefix)}</code>
+مقصد لیچ: <code>{leech_dest}</code>
+نشست (Session) لیچ: <b>{leech_method}</b>
+لیچ ترکیبی (Hybrid): <b>{hybrid_leech}</b>
+چیدمان تامب‌نیل: <b>{thumb_layout}</b>
 """
     elif stype == "rclone":
-        buttons.data_button("Rclone Config", f"userset {user_id} menu RCLONE_CONFIG")
+        buttons.data_button("کانفیگ Rclone", f"userset {user_id} menu RCLONE_CONFIG")
         buttons.data_button(
-            "Default Rclone Path", f"userset {user_id} menu RCLONE_PATH"
+            "مسیر پیش‌فرض Rclone", f"userset {user_id} menu RCLONE_PATH"
         )
-        buttons.data_button("Rclone Flags", f"userset {user_id} menu RCLONE_FLAGS")
-        buttons.data_button("Back", f"userset {user_id} back")
-        buttons.data_button("Close", f"userset {user_id} close")
-        rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
+        buttons.data_button("پرچم‌های Rclone", f"userset {user_id} menu RCLONE_FLAGS")
+        buttons.data_button("بازگشت", f"userset {user_id} back")
+        buttons.data_button("بستن", f"userset {user_id} close")
+        rccmsg = "موجود" if await aiopath.exists(rclone_conf) else "ناموجود"
         if user_dict.get("RCLONE_PATH", False):
             rccpath = user_dict["RCLONE_PATH"]
         elif Config.RCLONE_PATH:
             rccpath = Config.RCLONE_PATH
         else:
-            rccpath = "None"
+            rccpath = "هیچ"
         if user_dict.get("RCLONE_FLAGS", False):
             rcflags = user_dict["RCLONE_FLAGS"]
         elif "RCLONE_FLAGS" not in user_dict and Config.RCLONE_FLAGS:
             rcflags = Config.RCLONE_FLAGS
         else:
-            rcflags = "None"
-        text = f"""<u>Rclone Settings for {name}</u>
-Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code>
-Rclone Flags is <code>{rcflags}</code>"""
+            rcflags = "هیچ"
+        text = f"""<u>تنظیمات Rclone برای {name}</u>
+کانفیگ Rclone: <b>{rccmsg}</b>
+مسیر Rclone: <code>{rccpath}</code>
+پرچم‌های Rclone: <code>{rcflags}</code>"""
     elif stype == "gdrive":
-        buttons.data_button("token.pickle", f"userset {user_id} menu TOKEN_PICKLE")
-        buttons.data_button("Default Gdrive ID", f"userset {user_id} menu GDRIVE_ID")
-        buttons.data_button("Index URL", f"userset {user_id} menu INDEX_URL")
+        buttons.data_button("فایل token.pickle", f"userset {user_id} menu TOKEN_PICKLE")
+        buttons.data_button("آیدی پیش‌فرض Gdrive", f"userset {user_id} menu GDRIVE_ID")
+        buttons.data_button("آدرس Index", f"userset {user_id} menu INDEX_URL")
         if (
             user_dict.get("STOP_DUPLICATE", False)
             or "STOP_DUPLICATE" not in user_dict
             and Config.STOP_DUPLICATE
         ):
             buttons.data_button(
-                "Disable Stop Duplicate", f"userset {user_id} tog STOP_DUPLICATE f"
+                "غیرفعال‌سازی توقف تکراری", f"userset {user_id} tog STOP_DUPLICATE f"
             )
-            sd_msg = "Enabled"
+            sd_msg = "فعال"
         else:
             buttons.data_button(
-                "Enable Stop Duplicate", f"userset {user_id} tog STOP_DUPLICATE t"
+                "فعال‌سازی توقف تکراری", f"userset {user_id} tog STOP_DUPLICATE t"
             )
-            sd_msg = "Disabled"
-        buttons.data_button("Back", f"userset {user_id} back")
-        buttons.data_button("Close", f"userset {user_id} close")
-        tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
+            sd_msg = "غیرفعال"
+        buttons.data_button("بازگشت", f"userset {user_id} back")
+        buttons.data_button("بستن", f"userset {user_id} close")
+        tokenmsg = "موجود" if await aiopath.exists(token_pickle) else "ناموجود"
         if user_dict.get("GDRIVE_ID", False):
             gdrive_id = user_dict["GDRIVE_ID"]
         elif GDID := Config.GDRIVE_ID:
             gdrive_id = GDID
         else:
-            gdrive_id = "None"
-        index = user_dict["INDEX_URL"] if user_dict.get("INDEX_URL", False) else "None"
-        text = f"""<u>Gdrive API Settings for {name}</u>
-Gdrive Token <b>{tokenmsg}</b>
-Gdrive ID is <code>{gdrive_id}</code>
-Index URL is <code>{index}</code>
-Stop Duplicate is <b>{sd_msg}</b>"""
+            gdrive_id = "هیچ"
+        index = user_dict["INDEX_URL"] if user_dict.get("INDEX_URL", False) else "هیچ"
+        text = f"""<u>تنظیمات Gdrive API برای {name}</u>
+توکن Gdrive: <b>{tokenmsg}</b>
+آیدی Gdrive: <code>{gdrive_id}</code>
+آدرس Index: <code>{index}</code>
+توقف دانلود تکراری: <b>{sd_msg}</b>"""
     else:
-        buttons.data_button("Leech", f"userset {user_id} leech")
+        buttons.data_button("لیچ (Leech)", f"userset {user_id} leech")
         buttons.data_button("Rclone", f"userset {user_id} rclone")
         buttons.data_button("Gdrive API", f"userset {user_id} gdrive")
 
@@ -246,9 +246,9 @@ Stop Duplicate is <b>{sd_msg}</b>"""
         if not upload_paths and "UPLOAD_PATHS" not in user_dict and Config.UPLOAD_PATHS:
             upload_paths = Config.UPLOAD_PATHS
         if not upload_paths:
-            upload_paths = "None"
+            upload_paths = "هیچ"
 
-        buttons.data_button("Upload Paths", f"userset {user_id} menu UPLOAD_PATHS")
+        buttons.data_button("مسیرهای آپلود", f"userset {user_id} menu UPLOAD_PATHS")
 
         if user_dict.get("DEFAULT_UPLOAD", ""):
             default_upload = user_dict["DEFAULT_UPLOAD"]
@@ -257,65 +257,65 @@ Stop Duplicate is <b>{sd_msg}</b>"""
         du = "Gdrive API" if default_upload == "gd" else "Rclone"
         dur = "Gdrive API" if default_upload != "gd" else "Rclone"
         buttons.data_button(
-            f"Upload using {dur}", f"userset {user_id} {default_upload}"
+            f"آپلود با استفاده از {dur}", f"userset {user_id} {default_upload}"
         )
 
         user_tokens = user_dict.get("USER_TOKENS", False)
-        tr = "MY" if user_tokens else "OWNER"
-        trr = "OWNER" if user_tokens else "MY"
+        tr = "شخصی (MY)" if user_tokens else "اونر (OWNER)"
+        trr = "اونر (OWNER)" if user_tokens else "شخصی (MY)"
         buttons.data_button(
-            f"Use {trr} token/config",
+            f"استفاده از توکن/کانفیگ {trr}",
             f"userset {user_id} tog USER_TOKENS {'f' if user_tokens else 't'}",
         )
 
         buttons.data_button(
-            "Excluded Extensions", f"userset {user_id} menu EXCLUDED_EXTENSIONS"
+            "پسوندهای مستثنی", f"userset {user_id} menu EXCLUDED_EXTENSIONS"
         )
         if user_dict.get("EXCLUDED_EXTENSIONS", False):
             ex_ex = user_dict["EXCLUDED_EXTENSIONS"]
         elif "EXCLUDED_EXTENSIONS" not in user_dict:
             ex_ex = excluded_extensions
         else:
-            ex_ex = "None"
+            ex_ex = "هیچ"
 
-        ns_msg = "Added" if user_dict.get("NAME_SUBSTITUTE", False) else "None"
+        ns_msg = "اضافه شده" if user_dict.get("NAME_SUBSTITUTE", False) else "هیچ"
         buttons.data_button(
-            "Name Substitute", f"userset {user_id} menu NAME_SUBSTITUTE"
+            "جایگزینی نام", f"userset {user_id} menu NAME_SUBSTITUTE"
         )
 
-        buttons.data_button("YT-DLP Options", f"userset {user_id} menu YT_DLP_OPTIONS")
+        buttons.data_button("گزینه‌های YT-DLP", f"userset {user_id} menu YT_DLP_OPTIONS")
         if user_dict.get("YT_DLP_OPTIONS", False):
             ytopt = user_dict["YT_DLP_OPTIONS"]
         elif "YT_DLP_OPTIONS" not in user_dict and Config.YT_DLP_OPTIONS:
             ytopt = Config.YT_DLP_OPTIONS
         else:
-            ytopt = "None"
+            ytopt = "هیچ"
 
-        buttons.data_button("FFmpeg Cmds", f"userset {user_id} menu FFMPEG_CMDS")
+        buttons.data_button("دستورات FFmpeg", f"userset {user_id} menu FFMPEG_CMDS")
         if user_dict.get("FFMPEG_CMDS", False):
-            ffc = "Exists"
+            ffc = "موجود"
         elif "FFMPEG_CMDS" not in user_dict and Config.FFMPEG_CMDS:
-            ffc = "Exists"
+            ffc = "موجود"
         else:
-            ffc = "None"
+            ffc = "هیچ"
 
         if user_dict:
-            buttons.data_button("Reset All", f"userset {user_id} reset all")
+            buttons.data_button("بازنشانی همه", f"userset {user_id} reset all")
 
-        buttons.data_button("Close", f"userset {user_id} close")
+        buttons.data_button("بستن", f"userset {user_id} close")
 
-        text = f"""<u>Settings for {name}</u>
-Default Package is <b>{du}</b>
-Use <b>{tr}</b> token/config
-Upload Paths is <code>{upload_paths}</code>
+        text = f"""<u>تنظیمات برای {name}</u>
+پکیج پیش‌فرض: <b>{du}</b>
+استفاده از توکن/کانفیگ: <b>{tr}</b>
+مسیرهای آپلود: <code>{upload_paths}</code>
 
-Name substitution is <code>{ns_msg}</code>
+جایگزینی نام: <code>{ns_msg}</code>
 
-Excluded Extensions is <code>{ex_ex}</code>
+پسوندهای مستثنی: <code>{ex_ex}</code>
 
-YT-DLP Options is <code>{ytopt}</code>
+گزینه‌های YT-DLP: <code>{ytopt}</code>
 
-FFMPEG Commands is <b>{ffc}</b>"""
+دستورات FFMPEG: <b>{ffc}</b>"""
 
     return text, buttons.build_menu(1)
 
@@ -372,7 +372,7 @@ async def add_one(_, message, option):
             await send_message(message, str(e))
             return
     else:
-        await send_message(message, "It must be dict!")
+        await send_message(message, "فرمت باید دیکشنری (dict) باشد!")
         return
     await delete_message(message)
     await database.update_user_data(user_id)
@@ -416,7 +416,7 @@ async def set_option(_, message, option):
                 await send_message(message, str(e))
                 return
         else:
-            await send_message(message, "It must be dict!")
+            await send_message(message, "فرمت باید دیکشنری (dict) باشد!")
             return
     update_user_ldata(user_id, option, value)
     await delete_message(message)
@@ -431,27 +431,27 @@ async def get_menu(option, message, user_id):
         key = "file"
     else:
         key = "set"
-    buttons.data_button("Set", f"userset {user_id} {key} {option}")
+    buttons.data_button("تنظیم", f"userset {user_id} {key} {option}")
     if option in user_dict and key != "file":
-        buttons.data_button("Reset", f"userset {user_id} reset {option}")
-    buttons.data_button("Remove", f"userset {user_id} remove {option}")
+        buttons.data_button("بازنشانی", f"userset {user_id} reset {option}")
+    buttons.data_button("حذف", f"userset {user_id} remove {option}")
     if option == "FFMPEG_CMDS":
         ffc = None
         if user_dict.get("FFMPEG_CMDS", False):
             ffc = user_dict["FFMPEG_CMDS"]
-            buttons.data_button("Add one", f"userset {user_id} addone {option}")
-            buttons.data_button("Remove one", f"userset {user_id} rmone {option}")
+            buttons.data_button("افزودن مورد", f"userset {user_id} addone {option}")
+            buttons.data_button("حذف مورد", f"userset {user_id} rmone {option}")
         elif "FFMPEG_CMDS" not in user_dict and Config.FFMPEG_CMDS:
             ffc = Config.FFMPEG_CMDS
         if ffc:
-            buttons.data_button("FFMPEG VARIABLES", f"userset {user_id} ffvar")
-            buttons.data_button("View", f"userset {user_id} view {option}")
+            buttons.data_button("متغیرهای FFMPEG", f"userset {user_id} ffvar")
+            buttons.data_button("مشاهده", f"userset {user_id} view {option}")
     elif option in user_dict and user_dict[option]:
         if option == "THUMBNAIL":
-            buttons.data_button("View", f"userset {user_id} view {option}")
+            buttons.data_button("مشاهده", f"userset {user_id} view {option}")
         elif option in ["YT_DLP_OPTIONS", "UPLOAD_PATHS"]:
-            buttons.data_button("Add one", f"userset {user_id} addone {option}")
-            buttons.data_button("Remove one", f"userset {user_id} rmone {option}")
+            buttons.data_button("افزودن مورد", f"userset {user_id} addone {option}")
+            buttons.data_button("حذف مورد", f"userset {user_id} rmone {option}")
     if option in leech_options:
         back_to = "leech"
     elif option in rclone_options:
@@ -460,9 +460,9 @@ async def get_menu(option, message, user_id):
         back_to = "gdrive"
     else:
         back_to = "back"
-    buttons.data_button("Back", f"userset {user_id} {back_to}")
-    buttons.data_button("Close", f"userset {user_id} close")
-    text = f"Edit menu for: {option}"
+    buttons.data_button("بازگشت", f"userset {user_id} {back_to}")
+    buttons.data_button("بستن", f"userset {user_id} close")
+    text = f"منوی ویرایش برای: {option}"
     await edit_message(message, text, buttons.build_menu(2))
 
 
@@ -491,7 +491,7 @@ async def ffmpeg_variables(
     if ffc:
         buttons = ButtonMaker()
         if key is None:
-            msg = "Choose which key you want to fill/edit variables in it:"
+            msg = "کلیدی که می‌خواهید متغیرهای آن را پر/ویرایش کنید انتخاب کنید:"
             for k, v in list(ffc.items()):
                 add = False
                 for l in v:
@@ -499,10 +499,10 @@ async def ffmpeg_variables(
                         add = True
                 if add:
                     buttons.data_button(k, f"userset {user_id} ffvar {k}")
-            buttons.data_button("Back", f"userset {user_id} menu FFMPEG_CMDS")
-            buttons.data_button("Close", f"userset {user_id} close")
+            buttons.data_button("بازگشت", f"userset {user_id} menu FFMPEG_CMDS")
+            buttons.data_button("بستن", f"userset {user_id} close")
         elif key in ffc and value is None:
-            msg = f"Choose which variable you want to fill/edit: <u>{key}</u>\n\nCMDS:\n{ffc[key]}"
+            msg = f"متغیری که می‌خواهید پر/ویرایش کنید را انتخاب کنید: <u>{key}</u>\n\nدستورات:\n{ffc[key]}"
             for ind, vl in enumerate(ffc[key]):
                 if variables := set(findall(r"\{(.*?)\}", vl)):
                     for var in variables:
@@ -510,10 +510,10 @@ async def ffmpeg_variables(
                             var, f"userset {user_id} ffvar {key} {var} {ind}"
                         )
             buttons.data_button(
-                "Reset", f"userset {user_id} ffvar {key} ffmpegvarreset"
+                "بازنشانی", f"userset {user_id} ffvar {key} ffmpegvarreset"
             )
-            buttons.data_button("Back", f"userset {user_id} ffvar")
-            buttons.data_button("Close", f"userset {user_id} close")
+            buttons.data_button("بازگشت", f"userset {user_id} ffvar")
+            buttons.data_button("بستن", f"userset {user_id} close")
         elif key in ffc and value:
             old_value = (
                 user_dict.get("FFMPEG_VARIABLES", {})
@@ -521,11 +521,11 @@ async def ffmpeg_variables(
                 .get(index, {})
                 .get(value, "")
             )
-            msg = f"Edit/Fill this FFmpeg Variable: <u>{key}</u>\n\nItem: {ffc[key][int(index)]}\n\nVariable: {value}"
+            msg = f"ویرایش/پر کردن این متغیر FFmpeg: <u>{key}</u>\n\nآیتم: {ffc[key][int(index)]}\n\nمتغیر: {value}"
             if old_value:
-                msg += f"\n\nCurrent Value: {old_value}"
-            buttons.data_button("Back", f"userset {user_id} setevent")
-            buttons.data_button("Close", f"userset {user_id} close")
+                msg += f"\n\nمقدار فعلی: {old_value}"
+            buttons.data_button("بازگشت", f"userset {user_id} setevent")
+            buttons.data_button("بستن", f"userset {user_id} close")
         else:
             return
         await edit_message(message, msg, buttons.build_menu(2))
@@ -576,7 +576,7 @@ async def edit_user_settings(client, query):
     token_pickle = f"tokens/{user_id}.pickle"
     user_dict = user_data.get(user_id, {})
     if user_id != int(data[1]):
-        await query.answer("Not Yours!", show_alert=True)
+        await query.answer("این منو مال شما نیست!", show_alert=True)
     elif data[2] == "setevent":
         await query.answer()
     elif data[2] in ["leech", "gdrive", "rclone"]:
@@ -600,13 +600,13 @@ async def edit_user_settings(client, query):
         await query.answer()
         buttons = ButtonMaker()
         if data[3] == "THUMBNAIL":
-            text = "Send a photo to save it as custom thumbnail. Timeout: 60 sec"
+            text = "یک تصویر ارسال کنید تا به عنوان تصویر بندانگشتی ذخیره شود. مهلت: ۶۰ ثانیه"
         elif data[3] == "RCLONE_CONFIG":
-            text = "Send rclone.conf. Timeout: 60 sec"
+            text = "فایل rclone.conf را ارسال کنید. مهلت: ۶۰ ثانیه"
         else:
-            text = "Send token.pickle. Timeout: 60 sec"
-        buttons.data_button("Back", f"userset {user_id} setevent")
-        buttons.data_button("Close", f"userset {user_id} close")
+            text = "فایل token.pickle را ارسال کنید. مهلت: ۶۰ ثانیه"
+        buttons.data_button("بازگشت", f"userset {user_id} setevent")
+        buttons.data_button("بستن", f"userset {user_id} close")
         await edit_message(message, text, buttons.build_menu(1))
         pfunc = partial(add_file, ftype=data[3])
         await event_handler(
@@ -637,19 +637,19 @@ async def edit_user_settings(client, query):
             text = user_settings_text[data[3]]
             func = set_option
         elif data[2] == "addone":
-            text = f"Add one or more string key and value to {data[3]}. Example: {{'key 1': 62625261, 'key 2': 'value 2'}}. Timeout: 60 sec"
+            text = f"یک یا چند کلید و مقدار رشته‌ای به {data[3]} اضافه کنید. مثال: {{'key 1': 62625261, 'key 2': 'value 2'}}. مهلت: ۶۰ ثانیه"
             func = add_one
         elif data[2] == "rmone":
-            text = f"Remove one or more key from {data[3]}. Example: key 1/key2/key 3. Timeout: 60 sec"
+            text = f"یک یا چند کلید را از {data[3]} حذف کنید. مثال: key 1/key2/key 3. مهلت: ۶۰ ثانیه"
             func = remove_one
-        buttons.data_button("Back", f"userset {user_id} setevent")
-        buttons.data_button("Close", f"userset {user_id} close")
+        buttons.data_button("بازگشت", f"userset {user_id} setevent")
+        buttons.data_button("بستن", f"userset {user_id} close")
         await edit_message(message, text, buttons.build_menu(1))
         pfunc = partial(func, option=data[3])
         await event_handler(client, query, pfunc)
         await get_menu(data[3], message, user_id)
     elif data[2] == "remove":
-        await query.answer("Removed!", show_alert=True)
+        await query.answer("حذف شد!", show_alert=True)
         if data[3] in ["THUMBNAIL", "RCLONE_CONFIG", "TOKEN_PICKLE"]:
             if data[3] == "THUMBNAIL":
                 fpath = thumb_path
@@ -665,7 +665,7 @@ async def edit_user_settings(client, query):
             update_user_ldata(user_id, data[3], "")
             await database.update_user_data(user_id)
     elif data[2] == "reset":
-        await query.answer("Reseted!", show_alert=True)
+        await query.answer("بازنشانی شد!", show_alert=True)
         if data[3] in user_dict:
             del user_dict[data[3]]
         else:
@@ -724,7 +724,7 @@ async def get_users_settings(_, message):
             ):
                 msg += kmsg + vmsg
         if not msg:
-            await send_message(message, "No users data!")
+            await send_message(message, "داده‌های کاربران یافت نشد!")
             return
         msg_ecd = msg.encode()
         if len(msg_ecd) > 4000:
@@ -734,4 +734,4 @@ async def get_users_settings(_, message):
         else:
             await send_message(message, msg)
     else:
-        await send_message(message, "No users data!")
+        await send_message(message, "داده‌های کاربران یافت نشد!")
