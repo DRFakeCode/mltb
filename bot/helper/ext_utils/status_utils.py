@@ -176,27 +176,34 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
     ):
         tstatus = await task.status() if iscoroutinefunction(task.status) else task.status()
         
-        # --- محاسبات اضافه ---
+        # --- محاسبات ایمن (تغییر یافته برای رفع باگ) ---
         # محاسبه زمان سپری شده
         elapsed = "نامشخص"
         try:
-            # تلاش برای محاسبه زمان از لحظه شروع پیام
-            elapsed = get_readable_time(time() - task.listener.message.date.timestamp())
+            if hasattr(task.listener.message, 'date'):
+                elapsed = get_readable_time(time() - task.listener.message.date.timestamp())
         except:
             pass
 
+        # خواندن ایمن ویژگی‌ها با getattr (رفع خطای AttributeError)
+        is_qbit = getattr(task.listener, 'is_qbit', False)
+        is_aria2 = getattr(task.listener, 'is_aria2', False)
+        is_ytdlp = getattr(task.listener, 'is_ytdlp', False)
+        is_leech = getattr(task.listener, 'is_leech', False)
+        is_torrent = getattr(task.listener, 'is_torrent', False)
+        
         # تشخیص نوع موتور
-        if task.listener.is_qbit:
+        if is_qbit:
             engine = "qBittorrent"
-        elif task.listener.is_aria2:
+        elif is_aria2:
             engine = "Aria2"
-        elif task.listener.is_ytdlp:
+        elif is_ytdlp:
             engine = "Yt-dlp"
         else:
-            engine = "FFmpeg/Gdrive"
+            engine = "FFmpeg/Tg"
 
         # تشخیص حالت (Leech/Mirror/Zip)
-        mode = "#Leech" if task.listener.is_leech else "#Mirror"
+        mode = "#Leech" if is_leech else "#Mirror"
         if hasattr(task.listener, 'is_zip') and task.listener.is_zip:
             mode += " (Zip)"
         elif hasattr(task.listener, 'extract') and task.listener.extract:
@@ -209,8 +216,6 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         
         if tstatus not in [MirrorStatus.STATUS_SEED, MirrorStatus.STATUS_QUEUEUP] and task.listener.progress:
             progress = task.progress()
-            # خط پروگرس بار را حذف کردم تا شبیه نمونه درخواستی شما شود، اگر می‌خواهید بماند خط زیر را از کامنت درآورید
-            # msg += f"{get_progress_bar_string(progress)} {progress}\n"
             
             msg += f"<b>├ پردازش شده ←</b> {task.processed_bytes()}\n"
             msg += f"<b>├ حجم کل ←</b> {task.size()}\n"
@@ -221,7 +226,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f"<b>├ حالت ←</b> {mode}\n"
             
             # بخش سیدر برای تورنت
-            if tstatus == MirrorStatus.STATUS_DOWNLOAD and (task.listener.is_torrent or task.listener.is_qbit):
+            if tstatus == MirrorStatus.STATUS_DOWNLOAD and (is_torrent or is_qbit):
                 try:
                     msg += f"<b>├ سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
                 except:
@@ -236,10 +241,12 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         else:
             msg += f"<b>├ حجم ← </b>{task.size()}\n"
 
-        # این قسمت دستور کنسل جدید است
-        # GID را کوتاه می‌کنیم تا خیلی طولانی نشود
-        short_gid = task.gid()[:12]
-        msg += f"<b>╰ توقف ← /c_{short_gid}</b>\n\n"
+        # GID کوتاه شده برای دستور کنسل
+        try:
+            short_gid = task.gid()[:12]
+            msg += f"<b>╰ توقف ← /c_{short_gid}</b>\n\n"
+        except:
+             msg += f"<b>╰ توقف ← /cancel</b>\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -247,7 +254,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         else:
             msg = f"هیچ وظیفه {status} فعالی وجود ندارد!\n\n"
 
-    # --- دکمه‌ها (بدون تغییر) ---
+    # --- دکمه‌ها ---
     buttons = ButtonMaker()
     if not is_user:
         buttons.data_button("📜", f"status {sid} ov", position="header")
@@ -265,7 +272,6 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
     buttons.data_button("♻️", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
     
-    # خط آمار پایین
     msg += f"<b>پردازنده:</b> {cpu_percent()}% | <b>آزاد:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
     msg += f"\n<b>رم:</b> {virtual_memory().percent}% | <b>فعالیت:</b> {get_readable_time(time() - bot_start_time)}"
     
