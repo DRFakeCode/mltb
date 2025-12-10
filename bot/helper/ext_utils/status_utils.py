@@ -92,14 +92,14 @@ async def get_all_tasks(req_status: str, user_id):
 
 def get_readable_file_size(size_in_bytes):
     if not size_in_bytes:
-        return "0B"
+        return "\u200E0بایت"
 
     index = 0
     while size_in_bytes >= 1024 and index < len(SIZE_UNITS) - 1:
         size_in_bytes /= 1024
         index += 1
 
-    return f"{size_in_bytes:.2f}{SIZE_UNITS[index]}"
+    return f"\u200E{size_in_bytes:.2f}{SIZE_UNITS[index]}"
 
 
 def get_readable_time(seconds: int):
