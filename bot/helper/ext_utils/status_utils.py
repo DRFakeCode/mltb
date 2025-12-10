@@ -151,8 +151,8 @@ def get_progress_bar_string(pct):
     pct = float(pct.strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 8)
-    p_str = "■" * cFull
-    p_str += "□" * (12 - cFull)
+    p_str = "▰" * cFull
+    p_str += "▱" * (12 - cFull)
     return f"[{p_str}]"
 
 
@@ -202,41 +202,42 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             else:
                 subsize = ""
                 count = ""
-            msg += f"\n<b>Processed:</b> {task.processed_bytes()}{subsize}"
+            msg += f"\n<b>پردازش شده:</b> {task.processed_bytes()}{subsize}"
             if count:
-                msg += f"\n<b>Count:</b> {count}"
-            msg += f"\n<b>Size:</b> {task.size()}"
-            msg += f"\n<b>Speed:</b> {task.speed()}"
-            msg += f"\n<b>ETA:</b> {task.eta()}"
+                msg += f"\n<b>تعداد:</b> {count}"
+            msg += f"\n<b>حجم:</b> {task.size()}"
+            msg += f"\n<b>سرعت:</b> {task.speed()}"
+            msg += f"\n<b>زمان باقیمانده:</b> {task.eta()}"
             if (
                 tstatus == MirrorStatus.STATUS_DOWNLOAD
                 and task.listener.is_torrent
                 or task.listener.is_qbit
             ):
                 try:
-                    msg += f"\n<b>Seeders:</b> {task.seeders_num()} | <b>Leechers:</b> {task.leechers_num()}"
+                    msg += f"\n<b>سیدر:</b> {task.seeders_num()} | <b>لیچر:</b> {task.leechers_num()}"
                 except:
                     pass
         elif tstatus == MirrorStatus.STATUS_SEED:
-            msg += f"\n<b>Size: </b>{task.size()}"
-            msg += f"\n<b>Speed: </b>{task.seed_speed()}"
-            msg += f"\n<b>Uploaded: </b>{task.uploaded_bytes()}"
-            msg += f"\n<b>Ratio: </b>{task.ratio()}"
-            msg += f" | <b>Time: </b>{task.seeding_time()}"
+            msg += f"\n<b>حجم: </b>{task.size()}"
+            msg += f"\n<b>سرعت آپلود: </b>{task.seed_speed()}"
+            msg += f"\n<b>آپلود شده: </b>{task.uploaded_bytes()}"
+            msg += f"\n<b>ضریب: </b>{task.ratio()}"
+            msg += f" | <b>زمان: </b>{task.seeding_time()}"
         else:
-            msg += f"\n<b>Size: </b>{task.size()}"
-        msg += f"\n<b>Gid: </b><code>{task.gid()}</code>\n\n"
+            msg += f"\n<b>حجم: </b>{task.size()}"
+        # Changed GID line: Removed <code> tags and added /cancel command
+        msg += f"\n<b>لغو: </b>/cancel {task.gid()}\n\n"
 
     if len(msg) == 0:
         if status == "All":
             return None, None
         else:
-            msg = f"No Active {status} Tasks!\n\n"
+            msg = f"هیچ وظیفه {status} فعالی وجود ندارد!\n\n"
     buttons = ButtonMaker()
     if not is_user:
         buttons.data_button("📜", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
-        msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
+        msg += f"<b>صفحه:</b> {page_no}/{pages} | <b>تعداد:</b> {tasks_no} | <b>گام:</b> {page_step}\n"
         buttons.data_button("<<", f"status {sid} pre", position="header")
         buttons.data_button(">>", f"status {sid} nex", position="header")
         if tasks_no > 30:
@@ -248,6 +249,6 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 buttons.data_button(label, f"status {sid} st {status_value}")
     buttons.data_button("♻️", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
-    msg += f"<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
-    msg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {get_readable_time(time() - bot_start_time)}"
+    msg += f"<b>پردازنده:</b> {cpu_percent()}% | <b>آزاد:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
+    msg += f"\n<b>رم:</b> {virtual_memory().percent}% | <b>فعالیت:</b> {get_readable_time(time() - bot_start_time)}"
     return msg, button

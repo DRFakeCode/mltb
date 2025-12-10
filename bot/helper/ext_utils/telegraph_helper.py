@@ -61,15 +61,15 @@ class TelegraphHelper:
         for content in telegraph_content:
             if nxt_page == 1:
                 content += (
-                    f'<b><a href="https://telegra.ph/{path[nxt_page]}">Next</a></b>'
+                    f'<b><a href="https://telegra.ph/{path[nxt_page]}">بعدی</a></b>'
                 )
                 nxt_page += 1
             else:
                 if prev_page <= num_of_path:
-                    content += f'<b><a href="https://telegra.ph/{path[prev_page]}">Prev</a></b>'
+                    content += f'<b><a href="https://telegra.ph/{path[prev_page]}">قبلی</a></b>'
                     prev_page += 1
                 if nxt_page < num_of_path:
-                    content += f'<b> | <a href="https://telegra.ph/{path[nxt_page]}">Next</a></b>'
+                    content += f'<b> | <a href="https://telegra.ph/{path[nxt_page]}">بعدی</a></b>'
                     nxt_page += 1
             await self.edit_page(
                 path=path[prev_page],

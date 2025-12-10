@@ -1,262 +1,364 @@
 from ..telegram_helper.bot_commands import BotCommands
 from ...core.telegram_manager import TgClient
 
-mirror = """<b>Send link along with command line or </b>
+mirror = """<b>لینک را همراه با دستور ارسال کنید یا:</b>
 
 /cmd link
 
-<b>By replying to link/file</b>:
+<b>با ریپلای روی لینک/فایل</b>:
 
 /cmd -n new name -e -up upload destination
 
-<b>NOTE:</b>
-1. Commands that start with <b>qb</b> are ONLY for torrents."""
+<b>نکته:</b>
+1. دستوراتی که با <b>qb</b> شروع می‌شوند فقط مخصوص تورنت هستند."""
 
-yt = """<b>Send link along with command line</b>:
+yt = """<b>لینک را همراه با دستور ارسال کنید</b>:
 
 /cmd link
-<b>By replying to link</b>:
+<b>با ریپلای روی لینک</b>:
 /cmd -n new name -z password -opt x:y|x1:y1
 
-Check here all supported <a href='https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md'>SITES</a>
-Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L212'>FILE</a> or use this <a href='https://t.me/mltb_official_channel/177'>script</a> to convert cli arguments to api options."""
+لیست تمام <a href='https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md'>سایت‌های پشتیبانی شده</a> را اینجا ببینید.
+تمام گزینه‌های API yt-dlp را از این <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L212'>فایل</a> بررسی کنید یا از این <a href='https://t.me/mltb_official_channel/177'>اسکریپت</a> برای تبدیل آرگومان‌های CLI به گزینه‌های API استفاده کنید."""
 
-clone = """Send Gdrive|Gdot|Filepress|Filebee|Appdrive|Gdflix link or rclone path along with command or by replying to the link/rc_path by command.
-Use -sync to use sync method in rclone. Example: /cmd rcl/rclone_path -up rcl/rclone_path/rc -sync"""
+clone = """لینک Gdrive|Gdot|Filepress|Filebee|Appdrive|Gdflix یا مسیر rclone را همراه با دستور ارسال کنید یا روی لینک/مسیر ریپلای کنید.
+از -sync برای استفاده از متد همگام‌سازی (Sync) در rclone استفاده کنید. مثال: /cmd rcl/rclone_path -up rcl/rclone_path/rc -sync"""
 
-new_name = """<b>New Name</b>: -n
+new_name = """<b>نام جدید</b>: -n
 
 /cmd link -n new name
-Note: Doesn't work with torrents"""
+نکته: روی تورنت‌ها کار نمی‌کند"""
 
-multi_link = """<b>Multi links only by replying to first link/file</b>: -i
+multi_link = """<b>لینک‌های چندگانه (فقط با ریپلای روی اولین لینک/فایل)</b>: -i
 
 /cmd -i 10(number of links/files)"""
 
-same_dir = """<b>Move file(s)/folder(s) to new folder</b>: -m
+same_dir = """<b>انتقال فایل(ها)/پوشه(ها) به پوشه جدید</b>: -m
 
-You can use this arg also to move multiple links/torrents contents to the same directory, so all links will be uploaded together as one task
+می‌توانید از این آرگومان برای انتقال محتویات چندین لینک/تورنت به یک دایرکتوری یکسان استفاده کنید، بنابراین همه لینک‌ها به عنوان یک وظیفه با هم آپلود می‌شوند.
 
-/cmd link -m new folder (only one link inside new folder)
-/cmd -i 10(number of links/files) -m folder name (all links contents in one folder)
-/cmd -b -m folder name (reply to batch of message/file(each link on new line))
+/cmd link -m new folder (فقط یک لینک داخل پوشه جدید)
+/cmd -i 10(تعداد لینک‌ها) -m folder name (تمام محتویات لینک‌ها در یک پوشه)
+/cmd -b -m folder name (ریپلای روی پیام دسته‌جمعی یا فایل متنی (هر لینک در خط جدید))
 
-While using bulk you can also use this arg with different folder name along with the links in message or file batch
-Example:
+هنگام استفاده از حالت بالک (Bulk) می‌توانید این آرگومان را با نام پوشه‌های مختلف همراه با لینک‌ها در پیام یا فایل استفاده کنید.
+مثال:
 link1 -m folder1
 link2 -m folder1
 link3 -m folder2
 link4 -m folder2
 link5 -m folder3
 link6
-so link1 and link2 content will be uploaded from same folder which is folder1
-link3 and link4 content will be uploaded from same folder also which is folder2
-link5 will uploaded alone inside new folder named folder3
-link6 will get uploaded normally alone
+در اینجا محتویات link1 و link2 از یک پوشه یکسان (folder1) آپلود می‌شوند.
+محتویات link3 و link4 نیز از یک پوشه یکسان (folder2) آپلود می‌شوند.
+link5 به تنهایی داخل پوشه جدیدی به نام folder3 آپلود می‌شود.
+link6 به صورت عادی و جداگانه آپلود می‌شود.
 """
 
-thumb = """<b>Thumbnail for current task</b>: -t
+thumb = """<b>تصویر بندانگشتی (Thumbnail) برای وظیفه جاری</b>: -t
 
-/cmd link -t tg-message-link (doc or photo) or none (file without thumb)"""
+/cmd link -t tg-message-link (فایل یا عکس) یا none (فایل بدون تصویر)"""
 
-split_size = """<b>Split size for current task</b>: -sp
+split_size = """<b>حجم تکه‌ها (Split size) برای وظیفه جاری</b>: -sp
 
 /cmd link -sp (500mb or 2gb or 4000000000)
-Note: Only mb and gb are supported or write in bytes without unit!"""
+نکته: فقط mb و gb پشتیبانی می‌شوند یا مقدار را به بایت بدون واحد بنویسید!"""
 
-upload = """<b>Upload Destination</b>: -up
+upload = """<b>مقصد آپلود</b>: -up
 
-/cmd link -up rcl/gdl (rcl: to select rclone config, remote & path | gdl: To select token.pickle, gdrive id) using buttons
-You can directly add the upload path: -up remote:dir/subdir or -up Gdrive_id or -up id/username (telegram) or -up id/username|topic_id (telegram)
-If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
-If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
+/cmd link -up rcl/gdl (انتخاب با دکمه | rcl: انتخاب کانفیگ، ریموت و مسیر rclone | gdl: انتخاب token.pickle و Gdrive ID)
+می‌توانید مسیر آپلود را مستقیماً اضافه کنید: -up remote:dir/subdir یا -up Gdrive_id یا -up id/username (تلگرام) یا -up id/username|topic_id (تلگرام)
+اگر DEFAULT_UPLOAD روی `rc` باشد، می‌توانید از `gd` برای آپلود با ابزارهای گوگل به GDRIVE_ID استفاده کنید.
+اگر DEFAULT_UPLOAD روی `gd` باشد، می‌توانید از `rc` برای آپلود به RCLONE_PATH استفاده کنید.
 
-If you want to add path or gdrive manually from your config/token (UPLOADED FROM USETTING) add mrcc: for rclone and mtp: before the path/gdrive_id without space.
-/cmd link -up mrcc:main:dump or -up mtp:gdrive_id <strong>or you can simply edit upload using owner/user token/config from usetting without adding mtp: or mrcc: before the upload path/id</strong>
+اگر می‌خواهید مسیر یا gdrive را دستی از کانفیگ/توکن خود (آپلود شده در تنظیمات کاربر) اضافه کنید، عبارت mrcc: برای rclone و mtp: را قبل از مسیر/gdrive_id بدون فاصله اضافه کنید.
+/cmd link -up mrcc:main:dump یا -up mtp:gdrive_id <strong>یا می‌توانید به سادگی با استفاده از توکن/کانفیگ مالک/کاربر از تنظیمات بدون افزودن mtp: یا mrcc: مسیر آپلود را ویرایش کنید.</strong>
 
-To add leech destination:
+برای افزودن مقصد لیچ:
 -up id/@username/pm
--up b:id/@username/pm (b: means leech by bot) (id or username of the chat or write pm means private message so bot will send the files in private to you)
-when you should use b:(leech by bot)? When your default settings is leech by user and you want to leech by bot for specific task.
--up u:id/@username(u: means leech by user) This incase OWNER added USER_STRING_SESSION.
--up h:id/@username(hybrid leech) h: to upload files by bot and user based on file size.
--up id/@username|topic_id(leech in specific chat and topic) add | without space and write topic id after chat id or username.
+-up b:id/@username/pm (b: یعنی لیچ توسط ربات) (آیدی یا یوزرنیم چت؛ نوشتن pm یعنی پیام خصوصی تا ربات فایل‌ها را در پیوی برای شما بفرستد)
+چه زمانی باید از b: (لیچ توسط ربات) استفاده کنید؟ زمانی که تنظیمات پیش‌فرض شما لیچ توسط کاربر است و می‌خواهید برای یک وظیفه خاص توسط ربات لیچ کنید.
+-up u:id/@username (u: یعنی لیچ توسط کاربر) این در صورتی است که مالک USER_STRING_SESSION را اضافه کرده باشد.
+-up h:id/@username (لیچ ترکیبی) h: برای آپلود فایل‌ها توسط ربات و کاربر بر اساس حجم فایل.
+-up id/@username|topic_id (لیچ در چت و تاپیک خاص) علامت | را بدون فاصله اضافه کنید و آیدی تاپیک را بعد از آیدی چت یا یوزرنیم بنویسید.
 
-In case you want to specify whether using token.pickle or service accounts you can add tp:gdrive_id (using token.pickle) or sa:gdrive_id (using service accounts) or mtp:gdrive_id (using token.pickle uploaded from usetting).
-DEFAULT_UPLOAD doesn't affect on leech cmds.
+در صورتی که می‌خواهید مشخص کنید از token.pickle استفاده شود یا service accounts، می‌توانید tp:gdrive_id (استفاده از token.pickle) یا sa:gdrive_id (استفاده از سرویس اکانت) یا mtp:gdrive_id (استفاده از token.pickle آپلود شده از تنظیمات کاربر) را اضافه کنید.
+DEFAULT_UPLOAD روی دستورات لیچ تأثیری ندارد.
 """
 
-user_download = """<b>User Download</b>: link
+user_download = """<b>دانلود کاربر (User Download)</b>: link
 
-/cmd tp:link to download using owner token.pickle incase service account enabled.
-/cmd sa:link to download using service account incase service account disabled.
-/cmd tp:gdrive_id to download using token.pickle and file_id incase service account enabled.
-/cmd sa:gdrive_id to download using service account and file_id incase service account disabled.
-/cmd mtp:gdrive_id or mtp:link to download using user token.pickle uploaded from usetting
-/cmd mrcc:remote:path to download using user rclone config uploaded from usetting
-you can simply edit upload using owner/user token/config from usetting without adding mtp: or mrcc: before the path/id"""
+/cmd tp:link برای دانلود با استفاده از token.pickle مالک در صورت فعال بودن سرویس اکانت.
+/cmd sa:link برای دانلود با استفاده از سرویس اکانت در صورت غیرفعال بودن سرویس اکانت.
+/cmd tp:gdrive_id برای دانلود با استفاده از token.pickle و فایل آیدی در صورت فعال بودن سرویس اکانت.
+/cmd sa:gdrive_id برای دانلود با استفاده از سرویس اکانت و فایل آیدی در صورت غیرفعال بودن سرویس اکانت.
+/cmd mtp:gdrive_id یا mtp:link برای دانلود با استفاده از token.pickle کاربر که در تنظیمات آپلود شده.
+/cmd mrcc:remote:path برای دانلود با استفاده از کانفیگ rclone کاربر که در تنظیمات آپلود شده.
+می‌توانید به سادگی با استفاده از توکن/کانفیگ مالک/کاربر از تنظیمات بدون افزودن mtp: یا mrcc: قبل از مسیر/آیدی استفاده کنید."""
 
-rcf = """<b>Rclone Flags</b>: -rcf
+rcf = """<b>پرچم‌های Rclone (Flags)</b>: -rcf
 
 /cmd link|path|rcl -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
-This will override all other flags except --exclude
-Check here all <a href='https://rclone.org/flags/'>RcloneFlags</a>."""
+این تمام پرچم‌های دیگر به جز --exclude را نادیده می‌گیرد.
+تمام <a href='https://rclone.org/flags/'>RcloneFlags</a> را اینجا بررسی کنید."""
 
-bulk = """<b>Bulk Download</b>: -b
+bulk = """<b>دانلود گروهی (Bulk)</b>: -b
 
-Bulk can be used only by replying to text message or text file contains links separated by new line.
-Example:
+دانلود گروهی فقط با ریپلای روی پیام متنی یا فایل متنی حاوی لینک‌ها (جدا شده با خط جدید) قابل استفاده است.
+مثال:
 link1 -n new name -up remote1:path1 -rcf |key:value|key:value
 link2 -z -n new name -up remote2:path2
 link3 -e -n new name -up remote2:path2
-Reply to this example by this cmd -> /cmd -b(bulk)
+روی این مثال با این دستور ریپلای کنید -> /cmd -b(bulk)
 
-Note: Any arg along with the cmd will be setted to all links
-/cmd -b -up remote: -z -m folder name (all links contents in one zipped folder uploaded to one destination)
-so you can't set different upload destinations along with link incase you have added -m along with cmd
-You can set start and end of the links from the bulk like seed, with -b start:end or only end by -b :end or only start by -b start.
-The default start is from zero(first link) to inf."""
+نکته: هر آرگومانی که همراه دستور اصلی بیاید روی تمام لینک‌ها اعمال می‌شود.
+/cmd -b -up remote: -z -m folder name (تمام محتویات لینک‌ها در یک پوشه زیپ شده به یک مقصد آپلود می‌شوند)
+بنابراین اگر -m را همراه دستور اضافه کنید، نمی‌توانید مقاصد آپلود مختلفی را برای هر لینک تعیین کنید.
+می‌توانید شروع و پایان لینک‌ها را در حالت گروهی مانند سید مشخص کنید: با -b start:end یا فقط پایان با -b :end یا فقط شروع با -b start.
+شروع پیش‌فرض از صفر (اولین لینک) تا بی‌نهایت است."""
 
-rlone_dl = """<b>Rclone Download</b>:
+rlone_dl = """<b>دانلود Rclone</b>:
 
-Treat rclone paths exactly like links
-/cmd main:dump/ubuntu.iso or rcl(To select config, remote and path)
-Users can add their own rclone from user settings
-If you want to add path manually from your config add mrcc: before the path without space
+با مسیرهای rclone دقیقاً مثل لینک‌ها رفتار کنید.
+/cmd main:dump/ubuntu.iso یا rcl (برای انتخاب کانفیگ، ریموت و مسیر)
+کاربران می‌توانند rclone خود را از تنظیمات کاربر اضافه کنند.
+اگر می‌خواهید مسیر را دستی از کانفیگ خود اضافه کنید، mrcc: را قبل از مسیر بدون فاصله اضافه کنید.
 /cmd mrcc:main:dump/ubuntu.iso
-You can simply edit using owner/user config from usetting without adding mrcc: before the path"""
+می‌توانید به سادگی با استفاده از کانفیگ مالک/کاربر از تنظیمات بدون افزودن mrcc: قبل از مسیر ویرایش کنید."""
 
-extract_zip = """<b>Extract/Zip</b>: -e -z
+extract_zip = """<b>استخراج/فشرده‌سازی (Extract/Zip)</b>: -e -z
 
-/cmd link -e password (extract password protected)
-/cmd link -z password (zip password protected)
-/cmd link -z password -e (extract and zip password protected)
-Note: When both extract and zip added with cmd it will extract first and then zip, so always extract first"""
+/cmd link -e password (استخراج با پسورد)
+/cmd link -z password (زیپ با پسورد)
+/cmd link -z password -e (استخراج و سپس زیپ با پسورد)
+نکته: وقتی هر دو (استخراج و زیپ) با دستور اضافه شوند، ابتدا استخراج انجام می‌شود و سپس زیپ، پس همیشه اول استخراج کنید."""
 
-join = """<b>Join Splitted Files</b>: -j
+join = """<b>ادغام فایل‌های تکه شده</b>: -j
 
-This option will only work before extract and zip, so mostly it will be used with -m argument (samedir)
-By Reply:
+این گزینه فقط قبل از استخراج و زیپ کار می‌کند، بنابراین عمدتاً با آرگومان -m (پوشه یکسان) استفاده می‌شود.
+با ریپلای:
 /cmd -i 3 -j -m folder name
 /cmd -b -j -m folder name
-if u have link(folder) have splitted files:
+اگر لینکی (پوشه) دارید که فایل‌های تکه شده دارد:
 /cmd link -j"""
 
-tg_links = """<b>TG Links</b>:
+tg_links = """<b>لینک‌های تلگرام</b>:
 
-Treat links like any direct link
-Some links need user access so you must add USER_SESSION_STRING for it.
-Three types of links:
-Public: https://t.me/channel_name/message_id
-Private: tg://openmessage?user_id=xxxxxx&message_id=xxxxx
-Super: https://t.me/c/channel_id/message_id
-Range: https://t.me/channel_name/first_message_id-last_message_id
-Range Example: tg://openmessage?user_id=xxxxxx&message_id=555-560 or https://t.me/channel_name/100-150
-Note: Range link will work only by replying cmd to it"""
+با لینک‌ها مثل هر لینک مستقیم دیگری رفتار کنید.
+برخی لینک‌ها نیاز به دسترسی کاربر دارند بنابراین باید USER_SESSION_STRING را برای آن اضافه کنید.
+سه نوع لینک وجود دارد:
+عمومی: https://t.me/channel_name/message_id
+خصوصی: tg://openmessage?user_id=xxxxxx&message_id=xxxxx
+سوپرگروه: https://t.me/c/channel_id/message_id
+بازه (Range): https://t.me/channel_name/first_message_id-last_message_id
+مثال بازه: tg://openmessage?user_id=xxxxxx&message_id=555-560 یا https://t.me/channel_name/100-150
+نکته: لینک بازه فقط با ریپلای کردن دستور روی آن کار می‌کند."""
 
-sample_video = """<b>Sample Video</b>: -sv
+sample_video = """<b>ویدیو نمونه (Sample Video)</b>: -sv
 
-Create sample video for one video or folder of videos.
-/cmd -sv (it will take the default values which 60sec sample duration and part duration is 4sec).
-You can control those values. Example: /cmd -sv 70:5(sample-duration:part-duration) or /cmd -sv :5 or /cmd -sv 70."""
+ایجاد ویدیو نمونه برای یک ویدیو یا پوشه‌ای از ویدیوها.
+/cmd -sv (مقادیر پیش‌فرض را می‌گیرد: مدت نمونه 60 ثانیه و مدت پارت 4 ثانیه).
+می‌توانید این مقادیر را کنترل کنید. مثال: /cmd -sv 70:5 (مدت-نمونه:مدت-پارت) یا /cmd -sv :5 یا /cmd -sv 70."""
 
-screenshot = """<b>ScreenShots</b>: -ss
+screenshot = """<b>اسکرین‌شات (Screenshots)</b>: -ss
 
-Create screenshots for one video or folder of videos.
-/cmd -ss (it will take the default values which is 10 photos).
-You can control this value. Example: /cmd -ss 6."""
+ایجاد اسکرین‌شات برای یک ویدیو یا پوشه‌ای از ویدیوها.
+/cmd -ss (مقدار پیش‌فرض را می‌گیرد که 10 عکس است).
+می‌توانید این مقدار را کنترل کنید. مثال: /cmd -ss 6."""
 
-seed = """<b>Bittorrent seed</b>: -d
+seed = """<b>سید تورنت (Bittorrent seed)</b>: -d
 
-/cmd link -d ratio:seed_time or by replying to file/link
-To specify ratio and seed time add -d ratio:time.
-Example: -d 0.7:10 (ratio and time) or -d 0.7 (only ratio) or -d :10 (only time) where time in minutes"""
+/cmd link -d ratio:seed_time یا با ریپلای روی فایل/لینک
+برای مشخص کردن نسبت (ratio) و زمان سید، -d ratio:time را اضافه کنید.
+مثال: -d 0.7:10 (نسبت و زمان) یا -d 0.7 (فقط نسبت) یا -d :10 (فقط زمان) که زمان به دقیقه است."""
 
-zip_arg = """<b>Zip</b>: -z password
+zip_arg = """<b>فشرده‌سازی (Zip)</b>: -z password
 
-/cmd link -z (zip)
-/cmd link -z password (zip password protected)"""
+/cmd link -z (زیپ)
+/cmd link -z password (زیپ با پسورد)"""
 
-qual = """<b>Quality Buttons</b>: -s
+qual = """<b>دکمه‌های کیفیت</b>: -s
 
-In case default quality added from yt-dlp options using format option and you need to select quality for specific link or links with multi links feature.
+در صورتی که کیفیت پیش‌فرض از گزینه‌های yt-dlp با فرمت اضافه شده باشد و بخواهید کیفیت را برای لینک خاص یا لینک‌هایی با قابلیت چندگانه انتخاب کنید.
 /cmd link -s"""
 
-yt_opt = """<b>Options</b>: -opt
+yt_opt = """<b>گزینه‌ها (Options)</b>: -opt
 
 /cmd link -opt {"format": "bv*+mergeall[vcodec=none]", "nocheckcertificate": True, "playliststart": 10, "fragment_retries": float("inf"), "matchtitle": "S13", "writesubtitles": True, "live_from_start": True, "postprocessor_args": {"ffmpeg": ["-threads", "4"]}, "wait_for_video": (5, 100), "download_ranges": [{"start_time": 0, "end_time": 10}]}
 
-Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184'>FILE</a> or use this <a href='https://t.me/mltb_official_channel/177'>script</a> to convert cli arguments to api options."""
+تمام گزینه‌های API yt-dlp را از این <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184'>فایل</a> بررسی کنید یا از این <a href='https://t.me/mltb_official_channel/177'>اسکریپت</a> برای تبدیل آرگومان‌های CLI به گزینه‌های API استفاده کنید."""
 
-convert_media = """<b>Convert Media</b>: -ca -cv
-/cmd link -ca mp3 -cv mp4 (convert all audios to mp3 and all videos to mp4)
-/cmd link -ca mp3 (convert all audios to mp3)
-/cmd link -cv mp4 (convert all videos to mp4)
-/cmd link -ca mp3 + flac ogg (convert only flac and ogg audios to mp3)
-/cmd link -cv mkv - webm flv (convert all videos to mp4 except webm and flv)"""
+convert_media = """<b>تبدیل رسانه (Convert Media)</b>: -ca -cv
+/cmd link -ca mp3 -cv mp4 (تبدیل تمام صداها به mp3 و تمام ویدیوها به mp4)
+/cmd link -ca mp3 (تبدیل تمام صداها به mp3)
+/cmd link -cv mp4 (تبدیل تمام ویدیوها به mp4)
+/cmd link -ca mp3 + flac ogg (تبدیل فقط صداهای flac و ogg به mp3)
+/cmd link -cv mkv - webm flv (تبدیل تمام ویدیوها به mp4 به جز webm و flv)"""
 
-force_start = """<b>Force Start</b>: -f -fd -fu
-/cmd link -f (force download and upload)
-/cmd link -fd (force download only)
-/cmd link -fu (force upload directly after download finish)"""
+force_start = """<b>شروع اجباری (Force Start)</b>: -f -fd -fu
+/cmd link -f (دانلود و آپلود اجباری)
+/cmd link -fd (فقط دانلود اجباری)
+/cmd link -fu (آپلود اجباری بلافاصله بعد از اتمام دانلود)"""
 
-gdrive = """<b>Gdrive</b>: link
-If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
+gdrive = """<b>گوگل درایو (Gdrive)</b>: link
+اگر DEFAULT_UPLOAD روی `rc` باشد، می‌توانید `gd` را پاس دهید تا با ابزارهای گوگل به GDRIVE_ID آپلود شود.
 /cmd gdriveLink or gdl or gdriveId -up gdl or gdriveId or gd
-/cmd tp:gdriveLink or tp:gdriveId -up tp:gdriveId or gdl or gd (to use token.pickle if service account enabled)
-/cmd sa:gdriveLink or sa:gdriveId -p sa:gdriveId or gdl or gd (to use service account if service account disabled)
-/cmd mtp:gdriveLink or mtp:gdriveId -up mtp:gdriveId or gdl or gd(if you have added upload gdriveId from usetting) (to use user token.pickle that uploaded by usetting)
-You can simply edit using owner/user token from usetting without adding mtp: before the id"""
+/cmd tp:gdriveLink or tp:gdriveId -up tp:gdriveId or gdl or gd (برای استفاده از token.pickle اگر سرویس اکانت فعال باشد)
+/cmd sa:gdriveLink or sa:gdriveId -p sa:gdriveId or gdl or gd (برای استفاده از سرویس اکانت اگر سرویس اکانت غیرفعال باشد)
+/cmd mtp:gdriveLink or mtp:gdriveId -up mtp:gdriveId or gdl or gd (اگر upload gdriveId را از تنظیمات اضافه کرده‌اید) (برای استفاده از توکن کاربری که از تنظیمات آپلود شده)
+می‌توانید به سادگی با استفاده از توکن مالک/کاربر از تنظیمات بدون افزودن mtp: قبل از آیدی ویرایش کنید."""
 
-rclone_cl = """<b>Rclone</b>: path
-If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
+rclone_cl = """<b>آرکلون (Rclone)</b>: path
+اگر DEFAULT_UPLOAD روی `gd` باشد، می‌توانید `rc` را پاس دهید تا به RCLONE_PATH آپلود شود.
 /cmd rcl/rclone_path -up rcl/rclone_path/rc -rcf flagkey:flagvalue|flagkey|flagkey:flagvalue
 /cmd rcl or rclone_path -up rclone_path or rc or rcl
-/cmd mrcc:rclone_path -up rcl or rc(if you have add rclone path from usetting) (to use user config)
-You can simply edit using owner/user config from usetting without adding mrcc: before the path"""
+/cmd mrcc:rclone_path -up rcl or rc (اگر مسیر rclone را از تنظیمات اضافه کرده‌اید) (برای استفاده از کانفیگ کاربر)
+می‌توانید به سادگی با استفاده از کانفیگ مالک/کاربر از تنظیمات بدون افزودن mrcc: قبل از مسیر ویرایش کنید."""
 
-name_sub = r"""<b>Name Substitution</b>: -ns
+name_sub = r"""<b>جایگزینی نام (Name Substitution)</b>: -ns
 /cmd link -ns script/code/s | mirror/leech | tea/ /s | clone | cpu/ | \[mltb\]/mltb | \\text\\/text/s
-This will affect on all files. Format: wordToReplace/wordToReplaceWith/sensitiveCase
-Word Subtitions. You can add pattern instead of normal text. Timeout: 60 sec
-NOTE: You must add \ before any character, those are the characters: \^$.|?*+()[]{}-
-1. script will get replaced by code with sensitive case
-2. mirror will get replaced by leech
-4. tea will get replaced by space with sensitive case
-5. clone will get removed
-6. cpu will get replaced by space
-7. [mltb] will get replaced by mltb
-8. \text\ will get replaced by text with sensitive case
+این روی همه فایل‌ها تأثیر می‌گذارد. فرمت: کلمه/جایگزین/حساسیت‌به‌حروف
+جایگزینی کلمات. می‌توانید به جای متن عادی از الگو (Pattern) استفاده کنید. مهلت زمانی: 60 ثانیه
+نکته: قبل از هر کاراکتر خاص باید \ اضافه کنید، این کاراکترها شامل: \^$.|?*+()[]{}- هستند.
+1. script با code جایگزین می‌شود (حساس به حروف)
+2. mirror با leech جایگزین می‌شود
+4. tea با فاصله جایگزین می‌شود (حساس به حروف)
+5. clone حذف می‌شود
+6. cpu با فاصله جایگزین می‌شود
+7. [mltb] با mltb جایگزین می‌شود
+8. \text\ با text جایگزین می‌شود (حساس به حروف)
 """
 
-transmission = """<b>Tg transmission</b>: -hl -ut -bt
-/cmd link -hl (leech by user and bot session with respect to size) (Hybrid Leech)
-/cmd link -bt (leech by bot session)
-/cmd link -ut (leech by user)"""
+transmission = """<b>انتقال تلگرام</b>: -hl -ut -bt
+/cmd link -hl (لیچ توسط سشن کاربر و ربات بر اساس حجم) (لیچ ترکیبی)
+/cmd link -bt (لیچ توسط سشن ربات)
+/cmd link -ut (لیچ توسط سشن کاربر)"""
 
-thumbnail_layout = """Thumbnail Layout: -tl
-/cmd link -tl 3x3 (widthxheight) 3 photos in row and 3 photos in column"""
+thumbnail_layout = """<b>چیدمان تصویر بندانگشتی</b>: -tl
+/cmd link -tl 3x3 (عرضxارتفاع) 3 عکس در ردیف و 3 عکس در ستون"""
 
-leech_as = """<b>Leech as</b>: -doc -med
-/cmd link -doc (Leech as document)
-/cmd link -med (Leech as media)"""
+leech_as = """<b>نوع لیچ (Leech as)</b>: -doc -med
+/cmd link -doc (لیچ به عنوان سند/فایل)
+/cmd link -med (لیچ به عنوان رسانه/ویدیو)"""
 
-ffmpeg_cmds = """<b>FFmpeg Commands</b>: -ff
-list of lists of ffmpeg commands. You can set multiple ffmpeg commands for all files before upload. Don't write ffmpeg at beginning, start directly with the arguments.
-Notes:
-1. Add <code>-del</code> to the list(s) which you want from the bot to delete the original files after command run complete!
-3. To execute one of pre-added lists in bot like: ({"subtitle": ["-i mltb.mkv -c copy -c:s srt mltb.mkv"]}), you must use -ff subtitle (list key)
-Examples: ["-i mltb.mkv -c copy -c:s srt mltb.mkv", "-i mltb.video -c copy -c:s srt mltb", "-i mltb.m4a -c:a libmp3lame -q:a 2 mltb.mp3", "-i mltb.audio -c:a libmp3lame -q:a 2 mltb.mp3", "-i mltb -map 0:a -c copy mltb.mka -map 0:s -c copy mltb.srt", "-i mltb -i tg://openmessage?user_id=5272663208&message_id=322801 -filter_complex 'overlay=W-w-10:H-h-10' -c:a copy mltb"]
-Here I will explain how to use mltb.* which is reference to files you want to work on.
-1. First cmd: the input is mltb.mkv so this cmd will work only on mkv videos and the output is mltb.mkv also so all outputs is mkv. -del will delete the original media after complete run of the cmd.
-2. Second cmd: the input is mltb.video so this cmd will work on all videos and the output is only mltb so the extension is same as input files.
-3. Third cmd: the input in mltb.m4a so this cmd will work only on m4a audios and the output is mltb.mp3 so the output extension is mp3.
-4. Fourth cmd: the input is mltb.audio so this cmd will work on all audios and the output is mltb.mp3 so the output extension is mp3.
-5. Fifth cmd: You can add telegram link for small size input like photo to set watermark"""
+ffmpeg_cmds = """<b>🎞 دستورات FFmpeg</b>: -ff
+
+<b>📝 راهنمای کامل دستورات FFmpeg:</b>
+
+<b>⚠️ نکات مهم:</b>
+• نام پریست‌ها را دقیقاً <b>بدون فاصله اضافی</b> وارد کنید
+• مثال: <code>-ff 720p</code> ✅ | <code>-ff 720p  -crf23</code> ❌
+• غلط املایی: <code>marage</code> ❌ | صحیح: <code>merge</code> ✅
+• پریست‌ای نامعتبر باعث خطا می‌شود
+
+<b>🎵 استخراج صوت (Audio Extraction):</b>
+• <code>-ff audio</code> → استخراج صوت به AAC
+• <code>-ff audio0</code> → صوت اول (Track 0)
+• <code>-ff audio1</code> → صوت دوم (Track 1)
+• <code>-ff audio2</code> → صوت سوم (Track 2)
+• <code>-ff audioall</code> → همه صداها به M4A
+• <code>-ff mp3</code> → تبدیل به MP3
+• <code>-ff mp3hq</code> → MP3 با کیفیت 320k
+• <code>-ff aac</code> → تبدیل به AAC 192k
+• <code>-ff flac</code> → تبدیل به FLAC (بدون کاهش کیفیت)
+• <code>-ff wav</code> → تبدیل به WAV
+• <code>-ff opus</code> → تبدیل به OPUS 128k
+• <code>-ff m4a</code> → تبدیل به M4A
+• <code>-ff novideo</code> → فقط صدا (بدون ویدیو)
+
+<b>📝 استخراج زیرنویس (Subtitle Extraction):</b>
+• <code>-ff sub</code> → اولین زیرنویس SRT
+• <code>-ff sub0</code> → زیرنویس اول (Track 0)
+• <code>-ff sub1</code> → زیرنویس دوم (Track 1)
+• <code>-ff sub2</code> → زیرنویس سوم (Track 2)
+• <code>-ff subsrt</code> → استخراج به SRT
+• <code>-ff subass</code> → استخراج به ASS
+• <code>-ff suball</code> → همه زیرنویس‌ها
+
+<b>🎬 استخراج ویدیو (Video Extraction):</b>
+• <code>-ff video</code> → ویدیو بدون صدا
+• <code>-ff videoonly</code> → فقط ویدیو
+• <code>-ff video0</code> → ویدیو اول (Track 0)
+• <code>-ff video1</code> → ویدیو دوم (Track 1)
+• <code>-ff noaudio</code> → حذف صدا
+
+<b>📐 تغییر رزولوشن (Resolution Change):</b>
+• <code>-ff 1080p</code> → تبدیل به 1080p
+• <code>-ff 720p</code> → تبدیل به 720p
+• <code>-ff 480p</code> → تبدیل به 480p
+• <code>-ff 360p</code> → تبدیل به 360p
+• <code>-ff compress720</code> → فشرده 720p
+• <code>-ff compress480</code> → فشرده 480p
+• <code>-ff compress360</code> → فشرده 360p
+
+<b>🔄 تبدیل فرمت (Format Conversion):</b>
+• <code>-ff mp4</code> → تبدیل به MP4
+• <code>-ff mkv</code> → تبدیل به MKV
+• <code>-ff webm</code> → تبدیل به WebM
+• <code>-ff avi</code> → تبدیل به AVI
+
+<b>📦 فشرده‌سازی (Compression):</b>
+• <code>-ff compress</code> → فشرده‌سازی معمولی (CRF 28)
+• <code>-ff crf18</code> → کیفیت بالا (حجم بیشتر)
+• <code>-ff crf23</code> → کیفیت متوسط (توصیه می‌شود)
+• <code>-ff crf28</code> → کیفیت کم (حجم کمتر)
+
+<b>🖼 تصویر بندانگشتی (Thumbnail):</b>
+• <code>-ff thumb</code> → تصویر از ثانیه 10
+• <code>-ff thumb5</code> → تصویر از ثانیه 5
+• <code>-ff thumb30</code> → تصویر از ثانیه 30
+• <code>-ff screenshot</code> → اسکرین‌شات هر 10 ثانیه
+
+<b>✂️ برش ویدیو (Trim Video):</b>
+• <code>-ff trim10</code> → 10 ثانیه اول
+• <code>-ff trim30</code> → 30 ثانیه اول
+• <code>-ff trim60</code> → 1 دقیقه اول
+• <code>-ff trim120</code> → 2 دقیقه اول
+
+<b>🗑 حذف استریم (Remove Streams):</b>
+• <code>-ff nosub</code> → حذف زیرنویس
+• <code>-ff noaudio</code> → حذف صدا
+• <code>-ff novideo</code> → حذف ویدیو
+
+<b>🔄 چرخش ویدیو (Rotate Video):</b>
+• <code>-ff rotate90</code> → چرخش 90 درجه
+• <code>-ff rotate180</code> → چرخش 180 درجه
+• <code>-ff rotate270</code> → چرخش 270 درجه
+
+<b>⏩ تغییر سرعت (Speed Change):</b>
+• <code>-ff speed2x</code> → 2 برابر سریع‌تر
+• <code>-ff speed05x</code> → نصف سرعت (آهسته‌تر)
+
+<b>🎞 فریم ریت (Frame Rate):</b>
+• <code>-ff fps30</code> → تبدیل به 30 FPS
+• <code>-ff fps60</code> → تبدیل به 60 FPS
+
+<b>🌨 GIF ساخت:</b>
+• <code>-ff gif</code> → 5 ثانیه اول به GIF (320px)
+• <code>-ff gifhq</code> → 10 ثانیه اول به GIF با کیفیت (480px)
+
+<b>🔗 استخراج (Extract):</b>
+• <code>-ff extractall</code> → استخراج همه استریم‌ها
+
+<b>📝 متادیتا (Metadata):</b>
+• <code>-ff metadata</code> → افزودن متادیتا پیش‌فرض
+• <code>-ff metatitle</code> → افزودن عنوان سفارشی
+
+<b>💡 نکات مهم:</b>
+• می‌توانید چند دستور را ترکیب کنید
+• فلگ <code>-del</code> فایل اصلی را حذف می‌کند
+• برای انتخاب Track خاص از audio0/1/2 یا sub0/1/2 استفاده کنید
+• تمام پریست‌های صوتی اکنون با AAC کدگذاری می‌شوند (سازگاری با AC3/DTS)
+
+<b>مثال‌ها:</b>
+<code>/leech link -ff audio</code> → استخراج صدا
+<code>/leech link -ff 720p</code> → تبدیل به 720p
+<code>/leech link -ff nosub</code> → حذف زیرنویس
+<code>/mirror link -ff compress</code> → فشرده‌سازی و آپلود"""
 
 YT_HELP_DICT = {
     "main": yt,
-    "New-Name": f"{new_name}\nNote: Don't add file extension",
+    "New-Name": f"{new_name}\nنکته: فرمت فایل را اضافه نکنید",
     "Zip": zip_arg,
     "Quality": qual,
     "Options": yt_opt,
@@ -281,10 +383,10 @@ YT_HELP_DICT = {
 MIRROR_HELP_DICT = {
     "main": mirror,
     "New-Name": new_name,
-    "DL-Auth": "<b>Direct link authorization</b>: -au -ap\n\n/cmd link -au username -ap password",
-    "Headers": "<b>Direct link custom headers</b>: -h\n\n/cmd link -h key:value|key1:value1",
+    "DL-Auth": "<b>احراز هویت لینک مستقیم</b>: -au -ap\n\n/cmd link -au username -ap password",
+    "Headers": "<b>هدرهای سفارشی لینک مستقیم</b>: -h\n\n/cmd link -h key:value|key1:value1",
     "Extract/Zip": extract_zip,
-    "Select-Files": "<b>Bittorrent/JDownloader/Sabnzbd File Selection</b>: -s\n\n/cmd link -s or by replying to file/link",
+    "Select-Files": "<b>انتخاب فایل‌های تورنت/JDownloader/Sabnzbd</b>: -s\n\n/cmd link -s یا با ریپلای روی فایل/لینک",
     "Torrent-Seed": seed,
     "Multi-Link": multi_link,
     "Same-Directory": same_dir,
@@ -317,117 +419,117 @@ CLONE_HELP_DICT = {
 }
 
 RSS_HELP_MESSAGE = """
-Use this format to add feed url:
-Title1 link (required)
+برای افزودن آدرس فید از این فرمت استفاده کنید:
+Title1 link (الزامی)
 Title2 link -c cmd -inf xx -exf xx
 Title3 link -c cmd -d ratio:time -z password
 
 -c command -up mrcc:remote:path/subdir -rcf --buffer-size:8M|key|key:value
--inf For included words filter.
--exf For excluded words filter.
--stv true or false (sensitive filter)
+-inf برای فیلتر کلمات شامل شده.
+-exf برای فیلتر کلمات حذف شده.
+-stv true یا false (فیلتر حساس به حروف)
 
-Example: Title https://www.rss-url.com -inf 1080 or 720 or 144p|mkv or mp4|hevc -exf flv or web|xxx
-This filter will parse links that its titles contain `(1080 or 720 or 144p) and (mkv or mp4) and hevc` and doesn't contain (flv or web) and xxx words. You can add whatever you want.
+مثال: Title https://www.rss-url.com -inf 1080 or 720 or 144p|mkv or mp4|hevc -exf flv or web|xxx
+این فیلتر لینک‌هایی را پردازش می‌کند که عناوین آنها شامل `(1080 or 720 or 144p) و (mkv or mp4) و hevc` باشد و شامل کلمات (flv or web) و xxx نباشد. می‌توانید هر چه می‌خواهید اضافه کنید.
 
-Another example: -inf  1080  or 720p|.web. or .webrip.|hvec or x264. This will parse titles that contain ( 1080  or 720p) and (.web. or .webrip.) and (hvec or x264). I have added space before and after 1080 to avoid wrong matching. If this `10805695` number in title it will match 1080 if added 1080 without spaces after it.
+مثال دیگر: -inf  1080  or 720p|.web. or .webrip.|hvec or x264. این عناوینی را پردازش می‌کند که شامل ( 1080  or 720p) و (.web. or .webrip.) و (hvec or x264) باشد. من قبل و بعد از 1080 فاصله گذاشتم تا از تطابق اشتباه جلوگیری شود. اگر عدد `10805695` در عنوان باشد، اگر 1080 بدون فاصله باشد با آن تطابق پیدا می‌کند.
 
-Filter Notes:
-1. | means and.
-2. Add `or` between similar keys, you can add it between qualities or between extensions, so don't add filter like this f: 1080|mp4 or 720|web because this will parse 1080 and (mp4 or 720) and web ... not (1080 and mp4) or (720 and web).
-3. You can add `or` and `|` as much as you want.
-4. Take a look at the title if it has a static special character after or before the qualities or extensions or whatever and use them in the filter to avoid wrong match.
-Timeout: 60 sec.
+نکات فیلتر:
+1. | به معنی AND (و) است.
+2. بین کلیدهای مشابه `or` اضافه کنید، می‌توانید بین کیفیت‌ها یا پسوندها اضافه کنید، پس فیلتر را به صورت f: 1080|mp4 or 720|web اضافه نکنید چون این 1080 و (mp4 or 720) و web را پردازش می‌کند... نه (1080 و mp4) یا (720 و web).
+3. می‌توانید `or` و `|` را هر چقدر که بخواهید اضافه کنید.
+4. به عنوان نگاه کنید، اگر کاراکتر خاص ثابتی قبل یا بعد از کیفیت‌ها یا پسوندها وجود دارد، از آنها در فیلتر استفاده کنید تا از تطابق اشتباه جلوگیری شود.
+مهلت زمانی: 60 ثانیه.
 """
 
 PASSWORD_ERROR_MESSAGE = """
-<b>This link requires a password!</b>
-- Insert <b>::</b> after the link and write the password after the sign.
+<b>این لینک نیاز به پسورد دارد!</b>
+- بعد از لینک <b>::</b> وارد کنید و پسورد را بعد از علامت بنویسید.
 
-<b>Example:</b> link::my password
+<b>مثال:</b> link::my password
 """
 
 user_settings_text = {
-    "LEECH_SPLIT_SIZE": f"Send Leech split size in bytes or use gb or mb. Example: 40000000 or 2.5gb or 1000mb. IS_PREMIUM_USER: {TgClient.IS_PREMIUM_USER}. Timeout: 60 sec",
-    "LEECH_DUMP_CHAT": """"Send leech destination ID/USERNAME/PM. 
-* b:id/@username/pm (b: means leech by bot) (id or username of the chat or write pm means private message so bot will send the files in private to you) when you should use b:(leech by bot)? When your default settings is leech by user and you want to leech by bot for specific task.
-* u:id/@username(u: means leech by user) This incase OWNER added USER_STRING_SESSION.
-* h:id/@username(hybrid leech) h: to upload files by bot and user based on file size.
-* id/@username|topic_id(leech in specific chat and topic) add | without space and write topic id after chat id or username. Timeout: 60 sec""",
-    "LEECH_FILENAME_PREFIX": r"Send Leech Filename Prefix. You can add HTML tags. Example: <code>@mychannel</code>. Timeout: 60 sec",
-    "THUMBNAIL_LAYOUT": "Send thumbnail layout (widthxheight, 2x2, 3x3, 2x4, 4x4, ...). Example: 3x3. Timeout: 60 sec",
-    "RCLONE_PATH": "Send Rclone Path. If you want to use your rclone config edit using owner/user config from usetting or add mrcc: before rclone path. Example mrcc:remote:folder. Timeout: 60 sec",
-    "RCLONE_FLAGS": "key:value|key|key|key:value . Check here all <a href='https://rclone.org/flags/'>RcloneFlags</a>\nEx: --buffer-size:8M|--drive-starred-only",
-    "GDRIVE_ID": "Send Gdrive ID. If you want to use your token.pickle edit using owner/user token from usetting or add mtp: before the id. Example: mtp:F435RGGRDXXXXXX . Timeout: 60 sec",
-    "INDEX_URL": "Send Index URL. Timeout: 60 sec",
-    "UPLOAD_PATHS": "Send Dict of keys that have path values. Example: {'path 1': 'remote:rclonefolder', 'path 2': 'gdrive1 id', 'path 3': 'tg chat id', 'path 4': 'mrcc:remote:', 'path 5': b:@username} . Timeout: 60 sec",
-    "EXCLUDED_EXTENSIONS": "Send excluded extensions separated by space without dot at beginning. Timeout: 60 sec",
-    "NAME_SUBSTITUTE": r"""Word Subtitions. You can add pattern instead of normal text. Timeout: 60 sec
-NOTE: You must add \ before any character, those are the characters: \^$.|?*+()[]{}-
-Example: script/code/s | mirror/leech | tea/ /s | clone | cpu/ | \[mltb\]/mltb | \\text\\/text/s
-1. script will get replaced by code with sensitive case
-2. mirror will get replaced by leech
-4. tea will get replaced by space with sensitive case
-5. clone will get removed
-6. cpu will get replaced by space
-7. [mltb] will get replaced by mltb
-8. \text\ will get replaced by text with sensitive case
+    "LEECH_SPLIT_SIZE": f"حجم تکه‌های لیچ را به بایت یا gb یا mb بفرستید. مثال: 40000000 یا 2.5gb یا 1000mb. وضعیت پرمیوم: {TgClient.IS_PREMIUM_USER}. مهلت: 60 ثانیه",
+    "LEECH_DUMP_CHAT": """"آیدی/یوزرنیم/پیوی (PM) مقصد لیچ را بفرستید. 
+* b:id/@username/pm (b: یعنی لیچ توسط ربات) (آیدی یا یوزرنیم چت؛ نوشتن pm یعنی پیام خصوصی تا ربات فایل‌ها را در پیوی بفرستد) چه زمانی باید از b: استفاده کنید؟ زمانی که تنظیمات پیش‌فرض شما لیچ توسط کاربر است و می‌خواهید برای یک وظیفه خاص توسط ربات لیچ کنید.
+* u:id/@username (u: یعنی لیچ توسط کاربر) این در صورتی است که مالک USER_STRING_SESSION را اضافه کرده باشد.
+* h:id/@username (لیچ ترکیبی) h: برای آپلود فایل‌ها توسط ربات و کاربر بر اساس حجم فایل.
+* id/@username|topic_id (لیچ در چت و تاپیک خاص) علامت | را بدون فاصله اضافه کنید و آیدی تاپیک را بعد از آیدی چت یا یوزرنیم بنویسید. مهلت: 60 ثانیه""",
+    "LEECH_FILENAME_PREFIX": r"پیشوند نام فایل لیچ را بفرستید. می‌توانید تگ‌های HTML اضافه کنید. مثال: <code>@mychannel</code>. مهلت: 60 ثانیه",
+    "THUMBNAIL_LAYOUT": "چیدمان تصویر بندانگشتی را بفرستید (widthxheight, 2x2, 3x3, 2x4, 4x4, ...). مثال: 3x3. مهلت: 60 ثانیه",
+    "RCLONE_PATH": "مسیر Rclone را بفرستید. اگر می‌خواهید از کانفیگ خود استفاده کنید از تنظیمات کاربر ویرایش کنید یا mrcc: را قبل از مسیر rclone اضافه کنید. مثال mrcc:remote:folder. مهلت: 60 ثانیه",
+    "RCLONE_FLAGS": "key:value|key|key|key:value . تمام <a href='https://rclone.org/flags/'>RcloneFlags</a> را اینجا بررسی کنید\nمثال: --buffer-size:8M|--drive-starred-only",
+    "GDRIVE_ID": "آیدی Gdrive را بفرستید. اگر می‌خواهید از token.pickle خود استفاده کنید از تنظیمات کاربر ویرایش کنید یا mtp: را قبل از آیدی اضافه کنید. مثال: mtp:F435RGGRDXXXXXX . مهلت: 60 ثانیه",
+    "INDEX_URL": "آدرس Index را بفرستید. مهلت: 60 ثانیه",
+    "UPLOAD_PATHS": "دیکشنری کلیدهایی که مقادیر مسیر دارند را بفرستید. مثال: {'path 1': 'remote:rclonefolder', 'path 2': 'gdrive1 id', 'path 3': 'tg chat id', 'path 4': 'mrcc:remote:', 'path 5': b:@username} . مهلت: 60 ثانیه",
+    "EXCLUDED_EXTENSIONS": "پسوندهای حذف شده را با فاصله و بدون نقطه در ابتدا بفرستید. مهلت: 60 ثانیه",
+    "NAME_SUBSTITUTE": r"""جایگزینی کلمات. می‌توانید به جای متن عادی از الگو (Pattern) استفاده کنید. مهلت: 60 ثانیه
+نکته: قبل از هر کاراکتر خاص باید \ اضافه کنید، این کاراکترها شامل: \^$.|?*+()[]{}- هستند.
+مثال: script/code/s | mirror/leech | tea/ /s | clone | cpu/ | \[mltb\]/mltb | \\text\\/text/s
+1. script با code جایگزین می‌شود (حساس به حروف)
+2. mirror با leech جایگزین می‌شود
+4. tea با فاصله جایگزین می‌شود (حساس به حروف)
+5. clone حذف می‌شود
+6. cpu با فاصله جایگزین می‌شود
+7. [mltb] با mltb جایگزین می‌شود
+8. \text\ با text جایگزین می‌شود (حساس به حروف)
 """,
-    "YT_DLP_OPTIONS": """Send dict of YT-DLP Options. Timeout: 60 sec
-Format: {key: value, key: value, key: value}.
-Example: {"format": "bv*+mergeall[vcodec=none]", "nocheckcertificate": True, "playliststart": 10, "fragment_retries": float("inf"), "matchtitle": "S13", "writesubtitles": True, "live_from_start": True, "postprocessor_args": {"ffmpeg": ["-threads", "4"]}, "wait_for_video": (5, 100), "download_ranges": [{"start_time": 0, "end_time": 10}]}
-Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184'>FILE</a> or use this <a href='https://t.me/mltb_official_channel/177'>script</a> to convert cli arguments to api options.""",
-    "FFMPEG_CMDS": """Dict of list values of ffmpeg commands. You can set multiple ffmpeg commands for all files before upload. Don't write ffmpeg at beginning, start directly with the arguments.
-Examples: {"subtitle": ["-i mltb.mkv -c copy -c:s srt mltb.mkv", "-i mltb.video -c copy -c:s srt mltb"], "convert": ["-i mltb.m4a -c:a libmp3lame -q:a 2 mltb.mp3", "-i mltb.audio -c:a libmp3lame -q:a 2 mltb.mp3"], "extract": ["-i mltb -map 0:a -c copy mltb.mka -map 0:s -c copy mltb.srt"], "metadata": ["-i mltb.mkv -map 0 -map -0:v:1 -map -0:s -map 0:s:0 -map -0:v:m:attachment -c copy -metadata:s:v:0 title={title} -metadata:s:a:0 title={title} -metadata:s:a:1 title={title2} -metadata:s:a:2 title={title2} -c:s srt -metadata:s:s:0 title={title3} mltb -y -del"], "watermark": ["-i mltb -i tg://openmessage?user_id=5272663208&message_id=322801 -filter_complex 'overlay=W-w-10:H-h-10' -c:a copy mltb"]}
-Notes:
-- Add `-del` to the list which you want from the bot to delete the original files after command run complete!
-- To execute one of those lists in bot for example, you must use -ff subtitle (list key) or -ff convert (list key)
-Here I will explain how to use mltb.* which is reference to files you want to work on.
-1. First cmd: the input is mltb.mkv so this cmd will work only on mkv videos and the output is mltb.mkv also so all outputs is mkv. -del will delete the original media after complete run of the cmd.
-2. Second cmd: the input is mltb.video so this cmd will work on all videos and the output is only mltb so the extension is same as input files.
-3. Third cmd: the input in mltb.m4a so this cmd will work only on m4a audios and the output is mltb.mp3 so the output extension is mp3.
-4. Fourth cmd: the input is mltb.audio so this cmd will work on all audios and the output is mltb.mp3 so the output extension is mp3.
-5. FFmpeg Variables in last cmd which is metadata ({title}, {title2}, etc...), you can edit them in usetting
-6. Telegram link for small size inputs like photo to set watermark.""",
+    "YT_DLP_OPTIONS": """دیکشنری گزینه‌های YT-DLP را بفرستید. مهلت: 60 ثانیه
+فرمت: {key: value, key: value, key: value}.
+مثال: {"format": "bv*+mergeall[vcodec=none]", "nocheckcertificate": True, "playliststart": 10, "fragment_retries": float("inf"), "matchtitle": "S13", "writesubtitles": True, "live_from_start": True, "postprocessor_args": {"ffmpeg": ["-threads", "4"]}, "wait_for_video": (5, 100), "download_ranges": [{"start_time": 0, "end_time": 10}]}
+تمام گزینه‌های API yt-dlp را از این <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184'>فایل</a> بررسی کنید یا از این <a href='https://t.me/mltb_official_channel/177'>اسکریپت</a> برای تبدیل آرگومان‌های CLI به گزینه‌های API استفاده کنید.""",
+    "FFMPEG_CMDS": """دیکشنری مقادیر لیست دستورات ffmpeg. می‌توانید چندین دستور ffmpeg را برای همه فایل‌ها قبل از آپلود تنظیم کنید. ffmpeg را در ابتدا ننویسید، مستقیماً با آرگومان‌ها شروع کنید.
+مثال‌ها: {"subtitle": ["-i mltb.mkv -c copy -c:s srt mltb.mkv", "-i mltb.video -c copy -c:s srt mltb"], "convert": ["-i mltb.m4a -c:a libmp3lame -q:a 2 mltb.mp3", "-i mltb.audio -c:a libmp3lame -q:a 2 mltb.mp3"], "extract": ["-i mltb -map 0:a -c copy mltb.mka -map 0:s -c copy mltb.srt"], "metadata": ["-i mltb.mkv -map 0 -map -0:v:1 -map -0:s -map 0:s:0 -map -0:v:m:attachment -c copy -metadata:s:v:0 title={title} -metadata:s:a:0 title={title} -metadata:s:a:1 title={title2} -metadata:s:a:2 title={title2} -c:s srt -metadata:s:s:0 title={title3} mltb -y -del"], "watermark": ["-i mltb -i tg://openmessage?user_id=5272663208&message_id=322801 -filter_complex 'overlay=W-w-10:H-h-10' -c:a copy mltb"]}
+نکات:
+- `-del` را به لیستی اضافه کنید که می‌خواهید ربات فایل‌های اصلی را پس از اجرای کامل دستور حذف کند!
+- برای اجرای یکی از این لیست‌ها در ربات، باید از -ff subtitle (کلید لیست) یا -ff convert (کلید لیست) استفاده کنید.
+در اینجا توضیح می‌دهم چگونه از mltb.* استفاده کنید که ارجاع به فایل‌هایی است که می‌خواهید روی آنها کار کنید.
+1. دستور اول: ورودی mltb.mkv است بنابراین این دستور فقط روی ویدیوهای mkv کار می‌کند و خروجی نیز mltb.mkv است پس همه خروجی‌ها mkv هستند. -del رسانه اصلی را پس از اجرای کامل دستور حذف می‌کند.
+2. دستور دوم: ورودی mltb.video است بنابراین این دستور روی همه ویدیوها کار می‌کند و خروجی فقط mltb است پس پسوند همانند فایل‌های ورودی است.
+3. دستور سوم: ورودی mltb.m4a است بنابراین این دستور فقط روی صداهای m4a کار می‌کند و خروجی mltb.mp3 است پس پسوند خروجی mp3 است.
+4. دستور چهارم: ورودی mltb.audio است بنابراین این دستور روی همه صداها کار می‌کند و خروجی mltb.mp3 است پس پسوند خروجی mp3 است.
+5. متغیرهای FFmpeg در آخرین دستور که metadata است ({title}, {title2}, و غیره)، می‌توانید آنها را در تنظیمات کاربر ویرایش کنید.
+6. لینک تلگرام برای ورودی‌های کم حجم مثل عکس برای تنظیم واترمارک.""",
 }
 
 
 help_string = f"""
-NOTE: Try each command without any argument to see more detalis.
-/{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to cloud.
-/{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to cloud using qBittorrent.
-/{BotCommands.JdMirrorCommand[0]} or /{BotCommands.JdMirrorCommand[1]}: Start Mirroring to cloud using JDownloader.
-/{BotCommands.NzbMirrorCommand[0]} or /{BotCommands.NzbMirrorCommand[1]}: Start Mirroring to cloud using Sabnzbd.
-/{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
-/{BotCommands.LeechCommand[0]} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
-/{BotCommands.QbLeechCommand[0]} or /{BotCommands.QbLeechCommand[1]}: Start leeching using qBittorrent.
-/{BotCommands.JdLeechCommand[0]} or /{BotCommands.JdLeechCommand[1]}: Start leeching using JDownloader.
-/{BotCommands.NzbLeechCommand[0]} or /{BotCommands.NzbLeechCommand[1]}: Start leeching using Sabnzbd.
-/{BotCommands.YtdlLeechCommand[0]} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
-/{BotCommands.CloneCommand} [drive_url]: Copy file/folder to Google Drive.
-/{BotCommands.CountCommand} [drive_url]: Count file/folder of Google Drive.
-/{BotCommands.DeleteCommand} [drive_url]: Delete file/folder from Google Drive (Only Owner & Sudo).
-/{BotCommands.UserSetCommand[0]} or /{BotCommands.UserSetCommand[1]} [query]: Users settings.
-/{BotCommands.BotSetCommand[0]} or /{BotCommands.BotSetCommand[1]} [query]: Bot settings.
-/{BotCommands.SelectCommand}: Select files from torrents or nzb by gid or reply.
-/{BotCommands.CancelTaskCommand[0]} or /{BotCommands.CancelTaskCommand[1]} [gid]: Cancel task by gid or reply.
-/{BotCommands.ForceStartCommand[0]} or /{BotCommands.ForceStartCommand[1]} [gid]: Force start task by gid or reply.
-/{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
-/{BotCommands.ListCommand} [query]: Search in Google Drive(s).
-/{BotCommands.SearchCommand} [query]: Search for torrents with API.
-/{BotCommands.StatusCommand}: Shows a status of all the downloads.
-/{BotCommands.StatsCommand}: Show stats of the machine where the bot is hosted in.
-/{BotCommands.PingCommand}: Check how long it takes to Ping the Bot (Only Owner & Sudo).
-/{BotCommands.AuthorizeCommand}: Authorize a chat or a user to use the bot (Only Owner & Sudo).
-/{BotCommands.UnAuthorizeCommand}: Unauthorize a chat or a user to use the bot (Only Owner & Sudo).
-/{BotCommands.UsersCommand}: show users settings (Only Owner & Sudo).
-/{BotCommands.AddSudoCommand}: Add sudo user (Only Owner).
-/{BotCommands.RmSudoCommand}: Remove sudo users (Only Owner).
-/{BotCommands.RestartCommand}: Restart and update the bot (Only Owner & Sudo).
-/{BotCommands.LogCommand}: Get a log file of the bot. Handy for getting crash reports (Only Owner & Sudo).
-/{BotCommands.ShellCommand}: Run shell commands (Only Owner).
-/{BotCommands.AExecCommand}: Exec async functions (Only Owner).
-/{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
-/{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.
+نکته: هر دستور را بدون هیچ آرگومانی امتحان کنید تا جزئیات بیشتر را ببینید.
+/{BotCommands.MirrorCommand[0]} یا /{BotCommands.MirrorCommand[1]}: شروع میرور به فضای ابری.
+/{BotCommands.QbMirrorCommand[0]} یا /{BotCommands.QbMirrorCommand[1]}: شروع میرور به فضای ابری با استفاده از qBittorrent.
+/{BotCommands.JdMirrorCommand[0]} یا /{BotCommands.JdMirrorCommand[1]}: شروع میرور به فضای ابری با استفاده از JDownloader.
+/{BotCommands.NzbMirrorCommand[0]} یا /{BotCommands.NzbMirrorCommand[1]}: شروع میرور به فضای ابری با استفاده از Sabnzbd.
+/{BotCommands.YtdlCommand[0]} یا /{BotCommands.YtdlCommand[1]}: میرور لینک‌های پشتیبانی شده توسط yt-dlp.
+/{BotCommands.LeechCommand[0]} یا /{BotCommands.LeechCommand[1]}: شروع لیچ به تلگرام.
+/{BotCommands.QbLeechCommand[0]} یا /{BotCommands.QbLeechCommand[1]}: شروع لیچ با استفاده از qBittorrent.
+/{BotCommands.JdLeechCommand[0]} یا /{BotCommands.JdLeechCommand[1]}: شروع لیچ با استفاده از JDownloader.
+/{BotCommands.NzbLeechCommand[0]} یا /{BotCommands.NzbLeechCommand[1]}: شروع لیچ با استفاده از Sabnzbd.
+/{BotCommands.YtdlLeechCommand[0]} یا /{BotCommands.YtdlLeechCommand[1]}: لیچ لینک‌های پشتیبانی شده توسط yt-dlp.
+/{BotCommands.CloneCommand} [drive_url]: کپی فایل/پوشه به گوگل درایو.
+/{BotCommands.CountCommand} [drive_url]: شمارش فایل/پوشه گوگل درایو.
+/{BotCommands.DeleteCommand} [drive_url]: حذف فایل/پوشه از گوگل درایو (فقط مالک و سودو).
+/{BotCommands.UserSetCommand[0]} یا /{BotCommands.UserSetCommand[1]} [query]: تنظیمات کاربران.
+/{BotCommands.BotSetCommand[0]} یا /{BotCommands.BotSetCommand[1]} [query]: تنظیمات ربات.
+/{BotCommands.SelectCommand}: انتخاب فایل‌ها از تورنت یا nzb با gid یا ریپلای.
+/{BotCommands.CancelTaskCommand[0]} یا /{BotCommands.CancelTaskCommand[1]} [gid]: لغو وظیفه با gid یا ریپلای.
+/{BotCommands.ForceStartCommand[0]} یا /{BotCommands.ForceStartCommand[1]} [gid]: شروع اجباری وظیفه با gid یا ریپلای.
+/{BotCommands.CancelAllCommand} [query]: لغو تمام وظایف [status].
+/{BotCommands.ListCommand} [query]: جستجو در گوگل درایو(ها).
+/{BotCommands.SearchCommand} [query]: جستجو برای تورنت‌ها با API.
+/{BotCommands.StatusCommand}: نمایش وضعیت تمام دانلودها.
+/{BotCommands.StatsCommand}: نمایش آمار سروری که ربات روی آن میزبانی شده است.
+/{BotCommands.PingCommand}: بررسی مدت زمان پینگ ربات (فقط مالک و سودو).
+/{BotCommands.AuthorizeCommand}: مجاز کردن یک چت یا کاربر برای استفاده از ربات (فقط مالک و سودو).
+/{BotCommands.UnAuthorizeCommand}: غیرمجاز کردن یک چت یا کاربر برای استفاده از ربات (فقط مالک و سودو).
+/{BotCommands.UsersCommand}: نمایش تنظیمات کاربران (فقط مالک و سودو).
+/{BotCommands.AddSudoCommand}: افزودن کاربر سودو (فقط مالک).
+/{BotCommands.RmSudoCommand}: حذف کاربران سودو (فقط مالک).
+/{BotCommands.RestartCommand}: ریستارت و آپدیت ربات (فقط مالک و سودو).
+/{BotCommands.LogCommand}: دریافت فایل لاگ ربات. مفید برای دریافت گزارش خرابی (فقط مالک و سودو).
+/{BotCommands.ShellCommand}: اجرای دستورات شل (فقط مالک).
+/{BotCommands.AExecCommand}: اجرای توابع async (فقط مالک).
+/{BotCommands.ExecCommand}: اجرای توابع sync (فقط مالک).
+/{BotCommands.ClearLocalsCommand}: پاک کردن متغیرهای محلی {BotCommands.AExecCommand} یا {BotCommands.ExecCommand} (فقط مالک).
+/{BotCommands.RssCommand}: منوی RSS.
 """
