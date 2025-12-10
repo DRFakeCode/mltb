@@ -7,7 +7,7 @@ from ... import task_dict, task_dict_lock, bot_start_time, status_dict, DOWNLOAD
 from ...core.config_manager import Config
 from ..telegram_helper.button_build import ButtonMaker
 
-SIZE_UNITS = ["بایت", "کیلوبایت", "مگابایت", "گیگابایت", "ترابایت", "پتابایت"]
+SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 
 class MirrorStatus:
