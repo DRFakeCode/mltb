@@ -226,34 +226,34 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             progress = task.progress()
             
             # 3. Progress Bar & Percentage
-            msg += f"<b>├ {get_progress_bar_string(progress)} {progress}</b>\n"
+            msg += f"<b>• {get_progress_bar_string(progress)} {progress}</b>\n"
             
             # 4. Stats Tree
-            msg += f"<b>├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>├ پردازش شده ←</b> {task.processed_bytes()}\n"
-            msg += f"<b>├ حجم کل ←</b> {task.size()}\n"
-            msg += f"<b>├ سرعت ←</b> {task.speed()}\n"
-            msg += f"<b>├ زمان باقیمانده ←</b> {task.eta()}\n"
-            msg += f"<b>├ زمان سپری شده ←</b> {elapsed}\n"
-            msg += f"<b>├ موتور ←</b> {engine}\n"
-            msg += f"<b>├ حالت ←</b> {mode}\n"
+            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>• پردازش شده ←</b> {task.processed_bytes()}\n"
+            msg += f"<b>• حجم کل ←</b> {task.size()}\n"
+            msg += f"<b>• سرعت ←</b> {task.speed()}\n"
+            msg += f"<b>• زمان باقیمانده ←</b> {task.eta()}\n"
+            msg += f"<b>• زمان سپری شده ←</b> {elapsed}\n"
+            msg += f"<b>• موتور ←</b> {engine}\n"
+            msg += f"<b>• حالت ←</b> {mode}\n"
             
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (is_torrent or is_qbit):
                 try:
-                    msg += f"<b>├ سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
+                    msg += f"<b>• سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
                 except:
                     pass
                     
         elif tstatus == MirrorStatus.STATUS_SEED:
-            msg += f"<b>├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>├ حجم ← </b>{task.size()}\n"
-            msg += f"<b>├ سرعت آپلود ← </b>{task.seed_speed()}\n"
-            msg += f"<b>├ آپلود شده ← </b>{task.uploaded_bytes()}\n"
-            msg += f"<b>├ ضریب ← </b>{task.ratio()}\n"
-            msg += f"<b>├ زمان ← </b>{task.seeding_time()}\n"
+            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>• حجم ← </b>{task.size()}\n"
+            msg += f"<b>• سرعت آپلود ← </b>{task.seed_speed()}\n"
+            msg += f"<b>• آپلود شده ← </b>{task.uploaded_bytes()}\n"
+            msg += f"<b>• ضریب ← </b>{task.ratio()}\n"
+            msg += f"<b>• زمان ← </b>{task.seeding_time()}\n"
         else:
-            msg += f"<b>├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>├ حجم ← </b>{task.size()}\n"
+            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>• حجم ← </b>{task.size()}\n"
 
         # 5. Cancel Command
         try:

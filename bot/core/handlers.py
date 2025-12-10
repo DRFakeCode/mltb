@@ -9,6 +9,9 @@ from .telegram_manager import TgClient
 
 def add_handlers():
     TgClient.bot.add_handler(
+        MessageHandler(cancel_on_click, filters=regex(r"^/c_"))
+    )
+    TgClient.bot.add_handler(
         MessageHandler(
             authorize,
             filters=command(BotCommands.AuthorizeCommand, case_sensitive=True)

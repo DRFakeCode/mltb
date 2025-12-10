@@ -1,5 +1,5 @@
 from .bot_settings import send_bot_settings, edit_bot_settings
-from .cancel_task import cancel, cancel_multi, cancel_all_buttons, cancel_all_update
+from .cancel_task import cancel, cancel_multi, cancel_all_buttons, cancel_all_update, cancel_on_click
 from .chat_permission import authorize, unauthorize, add_sudo, remove_sudo
 from .clone import clone_node
 from .exec import aioexecute, execute, clear
@@ -41,6 +41,7 @@ __all__ = [
     "cancel_multi",
     "cancel_all_buttons",
     "cancel_all_update",
+    "cancel_on_click",
     "authorize",
     "unauthorize",
     "add_sudo",
