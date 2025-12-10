@@ -215,59 +215,60 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             user_name = "User"
 
         # --- BUILDING THE MESSAGE ---
-        
-        # 1. Filename
+        LRM = '\u200E' 
+
+        # 1. Filename (Usually safe, but LRM ensures the number stays on left)
         msg += f"<b>{index + start_position}.</b> <code>{escape(f'{task.name()}')}</code>\n"
         
-        # 2. Header (Task by...)
-        msg += f"<b>╭ تسک توسط {user_name}</b>\n"
+        # 2. Header - Add LRM before the symbol
+        msg += f"<b>{LRM}╭ تسک توسط {user_name}</b>\n"
 
         if tstatus not in [MirrorStatus.STATUS_SEED, MirrorStatus.STATUS_QUEUEUP] and task.listener.progress:
             progress = task.progress()
             
             # 3. Progress Bar & Percentage
-            msg += f"<b>• {get_progress_bar_string(progress)} {progress}</b>\n"
+            msg += f"<b>{LRM}├ {get_progress_bar_string(progress)} {progress}</b>\n"
             
-            # 4. Stats Tree
-            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>• پردازش شده ←</b> {task.processed_bytes()}\n"
-            msg += f"<b>• حجم کل ←</b> {task.size()}\n"
-            msg += f"<b>• سرعت ←</b> {task.speed()}\n"
-            msg += f"<b>• زمان باقیمانده ←</b> {task.eta()}\n"
-            msg += f"<b>• زمان سپری شده ←</b> {elapsed}\n"
-            msg += f"<b>• موتور ←</b> {engine}\n"
-            msg += f"<b>• حالت ←</b> {mode}\n"
+            # 4. Stats Tree - Add LRM to all ├ lines
+            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>{LRM}├ پردازش شده ←</b> {task.processed_bytes()}\n"
+            msg += f"<b>{LRM}├ حجم کل ←</b> {task.size()}\n"
+            msg += f"<b>{LRM}├ سرعت ←</b> {task.speed()}\n"
+            msg += f"<b>{LRM}├ زمان باقیمانده ←</b> {task.eta()}\n"
+            msg += f"<b>{LRM}├ زمان سپری شده ←</b> {elapsed}\n"
+            msg += f"<b>{LRM}├ موتور ←</b> {engine}\n"
+            msg += f"<b>{LRM}├ حالت ←</b> {mode}\n"
             
             if tstatus == MirrorStatus.STATUS_DOWNLOAD and (is_torrent or is_qbit):
                 try:
-                    msg += f"<b>• سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
+                    msg += f"<b>{LRM}├ سیدر/لیچر ←</b> {task.seeders_num()}/{task.leechers_num()}\n"
                 except:
                     pass
                     
         elif tstatus == MirrorStatus.STATUS_SEED:
-            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>• حجم ← </b>{task.size()}\n"
-            msg += f"<b>• سرعت آپلود ← </b>{task.seed_speed()}\n"
-            msg += f"<b>• آپلود شده ← </b>{task.uploaded_bytes()}\n"
-            msg += f"<b>• ضریب ← </b>{task.ratio()}\n"
-            msg += f"<b>• زمان ← </b>{task.seeding_time()}\n"
+            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>{LRM}├ حجم ← </b>{task.size()}\n"
+            msg += f"<b>{LRM}├ سرعت آپلود ← </b>{task.seed_speed()}\n"
+            msg += f"<b>{LRM}├ آپلود شده ← </b>{task.uploaded_bytes()}\n"
+            msg += f"<b>{LRM}├ ضریب ← </b>{task.ratio()}\n"
+            msg += f"<b>{LRM}├ زمان ← </b>{task.seeding_time()}\n"
         else:
-            msg += f"<b>• وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
-            msg += f"<b>• حجم ← </b>{task.size()}\n"
+            msg += f"<b>{LRM}├ وضعیت ← <a href='{task.listener.message.link}'>{tstatus}</a></b>\n"
+            msg += f"<b>{LRM}├ حجم ← </b>{task.size()}\n"
 
-        # 5. Cancel Command
+        # 5. Cancel Command - Add LRM before ╰
         try:
             short_gid = task.gid()[:12]
-            msg += f"<b>╰ توقف ← /c_{short_gid}</b>\n\n"
+            msg += f"<b>{LRM}╰ توقف ← /c_{short_gid}</b>\n\n"
         except:
-             msg += f"<b>╰ توقف ← /cancel</b>\n\n"
+             msg += f"<b>{LRM}╰ توقف ← /cancel</b>\n\n"
 
     if len(msg) == 0:
         if status == "All":
             return None, None
         else:
             msg = f"هیچ وظیفه {status} فعالی وجود ندارد!\n\n"
-
+            
     # Buttons (No Changes)
     buttons = ButtonMaker()
     if not is_user:

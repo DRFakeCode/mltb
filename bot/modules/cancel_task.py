@@ -191,5 +191,11 @@ async def cancel_all_update(_, query):
 
 # --- تابع جدید برای لغو با کلیک ---
 async def cancel_on_click(_, message):
-    gid = message.text.split("_")[1]
-    await cancel(_, message, gid)
+    text = message.text.split("@")[0]
+    args = text.split("_", 1)
+    
+    if len(args) > 1:
+        gid = args[1]
+        await cancel(_, message, gid)
+    else:
+        await send_message(message, "فرمت دستور نامعتبر است.")
