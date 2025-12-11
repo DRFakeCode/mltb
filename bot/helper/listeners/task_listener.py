@@ -339,17 +339,38 @@ class TaskListener(TaskConfig):
             if mime_type == "Folder":
                 msg += f"\n<b>SubFolders: </b>{folders}"
                 msg += f"\n<b>Files: </b>{files}"
+            
+            # --- CUSTOM LINK LOGIC ---
+            # Define your mapping here: "RemoteName:Path" -> "URL"
+            CUSTOM_PATH = "vip_sftp:public_html/dl1"
+            CUSTOM_URL = "https://novatg.ir/dl1"
+            
+            final_link = link # Default to Gdrive link if exists
+            
+            if rclone_path:
+                if CUSTOM_PATH in rclone_path:
+                    # Create the web link
+                    web_link = rclone_path.replace(CUSTOM_PATH, CUSTOM_URL)
+                    # Use this web link for the button later
+                    final_link = web_link 
+                    # Show it in the message
+                    msg += f"\n\n<b>Link:</b> <a href='{web_link}'>{web_link}</a>"
+                else:
+                    # Standard behavior for other remotes
+                    msg += f"\n\nPath: <code>{rclone_path}</code>"
+            
             if (
-                link
+                final_link
                 or rclone_path
                 and Config.RCLONE_SERVE_URL
                 and not self.private_link
             ):
                 buttons = ButtonMaker()
-                if link:
-                    buttons.url_button("☁️ Cloud Link", link)
-                else:
-                    msg += f"\n\nPath: <code>{rclone_path}</code>"
+                
+                # Add the Cloud Link Button
+                if final_link:
+                    buttons.url_button("☁️ Cloud Link", final_link)
+                
                 if rclone_path and Config.RCLONE_SERVE_URL and not self.private_link:
                     remote, rpath = rclone_path.split(":", 1)
                     url_path = rutils.quote(f"{rpath}")
@@ -371,7 +392,8 @@ class TaskListener(TaskConfig):
                             buttons.url_button("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n\nPath: <code>{rclone_path}</code>"
+                if not rclone_path: # Prevent double path printing
+                     msg += f"\n\nPath: <code>{rclone_path}</code>"
                 button = None
             msg += f"\n\n<b>cc: </b>{self.tag}"
             await send_message(self.message, msg, button)
