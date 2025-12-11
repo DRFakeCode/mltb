@@ -369,7 +369,7 @@ class TaskListener(TaskConfig):
                 
                 # Add the Cloud Link Button
                 if final_link:
-                    buttons.url_button("☁️ Cloud Link", final_link)
+                    buttons.url_button("☁️ لینک مستقیم", final_link)
                 
                 if rclone_path and Config.RCLONE_SERVE_URL and not self.private_link:
                     remote, rpath = rclone_path.split(":", 1)
